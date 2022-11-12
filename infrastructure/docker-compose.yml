@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  docker-postgres:
+    image: postgres:13.8
+    container_name: docker-postgre-tarask
+    volumes:
+      - /var/tarask/postgre/opt:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=tarask
+    ports:
+      - 5432:5432
+    networks:
+      - default
+    restart: always
+
+networks:
+  default:
+    name: docker_tarask_default

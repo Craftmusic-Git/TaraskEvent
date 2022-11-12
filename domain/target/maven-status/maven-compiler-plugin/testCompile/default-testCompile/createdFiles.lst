@@ -1,0 +1,10 @@
+fr\uha\ensisa\stegmiller\appintav\mocking\MockUserService.class
+fr\uha\ensisa\stegmiller\appintav\cucumber\StepDefinition.class
+fr\uha\ensisa\stegmiller\appintav\mocking\MockEventService.class
+fr\uha\ensisa\stegmiller\appintav\RunCucumberTest.class
+fr\uha\ensisa\stegmiller\appintav\RunSpringTest.class
+fr\uha\ensisa\stegmiller\appintav\cucumber\ParameterTypes.class
+fr\uha\ensisa\stegmiller\appintav\configuration\TestConfig.class
+fr\uha\ensisa\stegmiller\appintav\SpringDomainTest.class
+fr\uha\ensisa\stegmiller\appintav\mocking\MockFavorService.class
+fr\uha\ensisa\stegmiller\appintav\cucumber\UserConstants.class
