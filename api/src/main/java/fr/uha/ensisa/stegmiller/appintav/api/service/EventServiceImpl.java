@@ -22,7 +22,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event createEvent(Event event) {
         Event rep = addEvent(event);
-        event.setStatut(Event.Statut.CONFIGURATION);
+        rep.setStatut(Event.Statut.CONFIGURATION);
         return rep;
     }
 
@@ -49,6 +49,16 @@ public class EventServiceImpl implements EventService {
         }
 
         return getEventById(event.getId()).get();
+    }
+
+    @Override
+    public Event updateEvent(Event event) {
+        for (var e: events) {
+            if (Objects.equals(e.getId(), event.getId())) {
+                e = event;
+            }
+        }
+        return event;
     }
 
     @Override

@@ -1,10 +1,7 @@
 package fr.uha.ensisa.stegmiller.appintav.cucumber;
 
 import fr.uha.ensisa.stegmiller.appintav.command.event.*;
-import fr.uha.ensisa.stegmiller.appintav.command.favor.CreateFavorCommand;
-import fr.uha.ensisa.stegmiller.appintav.command.favor.CreateFavorCommandHandler;
-import fr.uha.ensisa.stegmiller.appintav.command.favor.FavorTakenByUserCommand;
-import fr.uha.ensisa.stegmiller.appintav.command.favor.FavorTakenByUserCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.command.favor.*;
 import fr.uha.ensisa.stegmiller.appintav.command.user.*;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockEventService;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockFavorService;
@@ -25,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Objects;
+import java.util.*;
 
 import static fr.uha.ensisa.stegmiller.appintav.cucumber.UserConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +56,10 @@ public class StepDefinition {
     CreateEventCommandHandler createEventCommandHandler;
     @Autowired
     UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandle;
+    @Autowired
+    ValidateEventCommandHandler validateEventCommandHandler;
+    @Autowired
+    UpdateFavorProgressCommandHandler updateFavorProgressCommandHandler;
 
     // ============= Local Var =============
     User user;
@@ -76,7 +74,8 @@ public class StepDefinition {
     Event processEvent;
     UpdateEventOrganisationCommand.Property updateProperty;
     Object updateInformation;
-
+    User favorManager;
+    Favor eventFavor;
     Error error;
 
     // ============= Cucumber Methods
@@ -116,6 +115,8 @@ public class StepDefinition {
     @Étantdonné("un event")
     public void unEvent(){
         event = new Event();
+        event.setName(EVENT_NAME);
+        event.setLocationAddress(EVENT_ADDRESS);
     }
 
     @Étantdonné("un formulaire d'inscription valide")
@@ -140,19 +141,9 @@ public class StepDefinition {
         user.setEventOrganized(new ArrayList<>());
     }
 
-    @Etantdonné("l'event est au statut \"Prêt\"")
-    public void lEventEstAuStatutPret(){
-        event.setStatut(Event.Statut.READY);
-    }
-
     @Etantdonné("l'utilisateur n'est pas l'organisateur de l'event")
     public void lUtilisateurnEstPaslOrganisateurDelEvent(){
 
-    }
-
-    @Etantdonné("l'event est au statut \"En cours\"")
-    public void lEventEstAuStatusEnCours(){
-        event.setStatut(Event.Statut.IN_PROGRESS);
     }
 
     @Etantdonné("un service de l'event sans responsable")
@@ -171,18 +162,14 @@ public class StepDefinition {
         eventAddress = EVENT_ADDRESS;
     }
 
-    @Etantdonné("l'event est au statut \"Organisation\"")
-    public void etantlEventEstAuStatutOrganisation(){
+    @Etantdonné("son organisateur")
+    public void sonOrganisateur(){
         unUtilisateurConecte();
         lAdresseDelEvent();
         lUtilisateurCreelEvent();
+        processEvent.setStatut(event.getStatut());
         event = processEvent;
         processEvent = null;
-    }
-
-    @Etantdonné("son organisateur")
-    public void sonOrganisateur(){
-
     }
 
     @Étantdonné("une {date} pour une date de l'event")
@@ -209,9 +196,63 @@ public class StepDefinition {
         updateProperty = UpdateEventOrganisationCommand.Property.LIMIT_AGE;
     }
 
-    @Etantdonné("que l'event est au statut {statut}")
-    public void quelEventEstAuStatut(Event.Statut statut){
+    @Etantdonné("l'event est au statut {string}")
+    public void l_event_est_au_statut(String string) {
+        event.setStatut(ParameterTypes.sStatut(string));
+    }
+
+    @Etantdonné("l'event est au statut {statut}")
+    public void l_event_est_au_statut_en_(Event.Statut statut) {
         event.setStatut(statut);
+    }
+
+    @Etantdonné("l'event n'a pas de service")
+    public void lEventnAPasDeService(){
+        event.setFavors(new HashMap<>());
+    }
+
+    @Etantdonné("l'organisateur de l'event")
+    public void lOrganisateurDelEvent(){
+        unUtilisateurConecte();
+        user.getEventOrganized().add(event);
+    }
+
+    @Etantdonné("l'event a au moins un service")
+    public void l_event_a_au_moins_un_service() {
+        event.getFavors().put(new Favor(FAVOR_TITLE,FAVOR_DESCRIPTION),null);
+    }
+
+    @Étantdonné("tous les services de l'event ont un pourcentage de {int}%")
+    public void tous_les_services_de_l_event_ont_un_pourcentage_de(Integer int1) {
+        for(var entry : event.getFavors().entrySet()){
+            entry.getKey().setProgress(int1);
+        }
+    }
+
+    @Étantdonné("au moins un service de l'event a un pourcentage inférieur à {int}%")
+    public void au_moins_un_service_de_l_event_a_un_pourcentage_inférieur_à(Integer int1) {
+        for(var entry : event.getFavors().entrySet()){
+            entry.getKey().setProgress(int1-1);
+        }
+    }
+
+    @Étantdonné("un service de l'event")
+    public void un_service_de_l_event() {
+        favor = new Favor(FAVOR_TITLE, FAVOR_DESCRIPTION);
+        favor = createFavorCommandHandler.handle(new CreateFavorCommand(event,favor));
+    }
+
+    @Étantdonné("le responsable du service")
+    public void le_responsable_du_service() {
+        favorManager = new User(USER_FAVOR_MANAGER_NAME,USER_FAVOR_MANAGER_FIRSTNAME,USER_FAVOR_MANAGER_BIRTHDATE);
+        favorManager = userService.createUser(favorManager);
+        try{
+            processEvent = favorTakenByUserCommandHandler.handle(new FavorTakenByUserCommand(favorManager,event,favor));
+        }catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
     }
 
     // ================ Quand ================
@@ -227,6 +268,8 @@ public class StepDefinition {
             processUser = createUserCommandHandler.handle(createUserCommand);
         } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -236,6 +279,8 @@ public class StepDefinition {
             processUser = authentificationUserCommandHandler.handle(authentificationUserCommand);
         } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -247,6 +292,8 @@ public class StepDefinition {
             removeUserCommandHandler.handle(new RemoveUserCommand(processUser));
         } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -255,8 +302,10 @@ public class StepDefinition {
         JoinEventCommand command = new JoinEventCommand(event, user);
         try {
             joinEventCommandHandler.handle(command);
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -264,8 +313,10 @@ public class StepDefinition {
     public void lUtilisateurEstAjouteAuxParticipantsDelEvents(){
         try {
             favorTakenByUserCommandHandler.handle(new FavorTakenByUserCommand(user,event,favor));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -273,8 +324,10 @@ public class StepDefinition {
     public void lUtilisateurCreelEvent(){
         try {
             processEvent = createEventCommandHandler.handle(new CreateEventCommand(user,new Event(eventName, eventAddress)));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -282,7 +335,7 @@ public class StepDefinition {
     public void l_organisateur_met_à_jour_la_date_de_l_event_avec_l(Date date) {
         try {
             processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
         } catch (Error e){
             error = e;
@@ -293,8 +346,10 @@ public class StepDefinition {
     public void l_organisateur_met_à_jour_la_capacité_de_l_event_avec_l(Integer int1) {
         try {
             processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -302,8 +357,10 @@ public class StepDefinition {
     public void l_organisateur_met_à_jour_la_en_exterieur_de_l_event_avec_l_non(Boolean bool) {
         try {
             processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
@@ -311,24 +368,53 @@ public class StepDefinition {
     public void l_organisateur_met_à_jour_la_age_limite_de_l_event_avec_l(Integer int1) {
         try {
             processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
     @Quand("l'organisateur met à jour l'event")
     public void lOrganisateurMetAJourlEvent(){
+
         try {
             processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, UpdateEventOrganisationCommand.Property.DATE, EVENT_DATE));
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
+        } catch (Error e){
+            error = e;
         }
     }
 
     @Quand("l'event est complètement renseigné")
-    public void lEventEstCompletementRenseigne(){
-
+    public void l_event_est_complètement_renseigné() {
+        // Vérification faite à chaque mise à jour
     }
+
+    @Quand("l'organisateur valide l'event")
+    public void lOrganisateurValidelEvent(){
+        try {
+            processEvent = validateEventCommandHandler.handle(new ValidateEventCommand(user, event));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Quand("le responsable du service modifie le pourcentage du service à {int}%")
+    public void le_responsable_du_service_modifie_le_pourcentage_du_service_à(Integer int1) {
+        try {
+            processEvent = updateFavorProgressCommandHandler.handle(new UpdateFavorProgressCommand(event,favor,favorManager,int1));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+
 
     // ================ Alors ================
 
@@ -391,10 +477,6 @@ public class StepDefinition {
         assertNotNull(processEvent);
     }
 
-    @Alors("l'event est donc au statut \"Organisation\"")
-    public void lEventEstAuStatutOrganisation(){
-        assertEquals(Event.Statut.CONFIGURATION, processEvent.getStatut());
-    }
 
     @Alors("l'utilisateur est organisateur de l'event")
     public void lUtilisateurEstOrganisateurDelEvent(){
@@ -427,11 +509,6 @@ public class StepDefinition {
         assertEquals(processEvent.getOrganization().getAgeLimit(), int1);
     }
 
-    @Alors("l'event est au statut \"En attente\"")
-    public void lEventEstAuStatutEnAttente(){
-        assertEquals(Event.Statut.WAITING,processEvent.getStatut());
-    }
-
     @Alors("le scoring est calculé")
     public void leScoringEstCalcule(){
         assertNotEquals(0, event.getOrganization().getScoring().getGlobalScore());
@@ -440,5 +517,10 @@ public class StepDefinition {
     @Alors("le scoring est recalculé")
     public void leScoringEstRecalcule(){
         assertNotEquals(0, event.getOrganization().getScoring().getGlobalScore());
+    }
+
+    @Alors("l'event est donc au statut {string}")
+    public void l_event_est_donc_au_statut(String string) {
+        assertEquals(ParameterTypes.sStatut(string),processEvent.getStatut());
     }
 }

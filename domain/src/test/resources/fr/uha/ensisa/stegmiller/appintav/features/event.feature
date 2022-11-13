@@ -32,7 +32,7 @@ Scénario: Un event est complètement renseigné
     Et son organisateur
     Quand l'organisateur met à jour l'event
     Et que l'event est complètement renseigné
-    Alors l'event est au statut "En attente"
+    Alors l'event est donc au statut "En attente"
     Et le scoring est calculé
 
     Plan du scénario: mettre à jour le scoring
@@ -47,7 +47,7 @@ Scénario: Un event est complètement renseigné
             | En attente |
             | En cours   |
 
-Scénario: Validation d'un event sans service
+    Scénario: Validation d'un event sans service
     Étant donné un event
     Et que l'event est au statut "En attente"
     Et que l'event n'a pas de service

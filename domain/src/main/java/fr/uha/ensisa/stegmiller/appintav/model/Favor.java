@@ -7,17 +7,17 @@ import lombok.Data;
 public class Favor extends Model {
     private String title;
     private String description;
-    private Float progress;
+    private int progress;
 
     public Favor(){
         title = "";
         description = "";
-        progress = 0f;
+        progress = 0;
     }
 
     public Favor(String title, String description){
         this.title = title;
         this.description = description;
-        progress = 0f;
+        progress = 0;
     }
 }

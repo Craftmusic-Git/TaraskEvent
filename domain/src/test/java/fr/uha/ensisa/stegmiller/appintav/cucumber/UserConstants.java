@@ -17,10 +17,14 @@ public abstract class UserConstants {
     public static final String EVENT_NAME = "Anniversaire";
     public static final Address EVENT_ADDRESS;
     public static final Date EVENT_DATE;
+    public static final String USER_FAVOR_MANAGER_NAME = "LOUP";
+    public static final String USER_FAVOR_MANAGER_FIRSTNAME = "Camille";
+    public static final Date USER_FAVOR_MANAGER_BIRTHDATE;
     static {
         try {
             USER_STD_BIRHTDATE = new SimpleDateFormat("dd/MM/yyyy").parse("01/07/2000");
             EVENT_DATE = new SimpleDateFormat("dd/MM/yyyy").parse("01/07/2023");
+            USER_FAVOR_MANAGER_BIRTHDATE = new SimpleDateFormat("dd/MM/yyyy").parse("24/09/2001");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

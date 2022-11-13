@@ -25,8 +25,23 @@ public class ParameterTypes {
         }
     }
 
-    @ParameterType("Organisation|En attente|En cours|Prêt")
+    @ParameterType("En attente|En cours|Prêt")
     public Statut statut(String value){
+        switch (value){
+            case "Organisation":
+                return Statut.CONFIGURATION;
+            case "En attente":
+                return Statut.WAITING;
+            case "En cours":
+                return Statut.IN_PROGRESS;
+            case "Prêt":
+                return Statut.READY;
+            default :
+                return Statut.ERROR;
+        }
+    }
+
+    public static Statut sStatut(String value){
         switch (value){
             case "Organisation":
                 return Statut.CONFIGURATION;

@@ -9,4 +9,5 @@ import org.springframework.stereotype.Service;
 public interface FavorService {
     Favor createFavor(final Event event, final Favor favor);
     Favor addUserToFavor(final Favor favor, final User user);
+    Favor updateFavor(final Favor favor);
 }

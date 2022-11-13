@@ -37,4 +37,14 @@ public class FavorServiceImpl implements FavorService {
         user.getManagedFavor().add(favor);
         return favor;
     }
+
+    @Override
+    public Favor updateFavor(Favor favor) {
+        for(var f : favors)
+            if(f.getId().equals(favor.getId())) {
+                f = favor;
+                return f;
+            }
+        return favor;
+    }
 }
