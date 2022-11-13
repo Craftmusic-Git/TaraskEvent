@@ -27,6 +27,8 @@ public class CreateFavorCommandHandler implements Command.Handler<CreateFavorCom
             throw new Error("Event is null");
         }
 
+        if(command.getOrganizator() != null)
+            LOGGER.info(command.getOrganizator() + " created a new favor");
         var f = favorService.createFavor(command.getEvent(),command.getFavor());
         return f;
     }

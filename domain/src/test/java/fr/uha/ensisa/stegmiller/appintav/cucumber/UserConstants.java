@@ -20,6 +20,9 @@ public abstract class UserConstants {
     public static final String USER_FAVOR_MANAGER_NAME = "LOUP";
     public static final String USER_FAVOR_MANAGER_FIRSTNAME = "Camille";
     public static final Date USER_FAVOR_MANAGER_BIRTHDATE;
+    public static final String NEW_FAVOR_NAME = "Cacahuètes";
+    public static final String NEW_FAVOR_DESCRIPTION = "LES CACAHUETES ! ! !";
+    public static final int NEW_FAVOR_PERCENTAGE = 42;
     static {
         try {
             USER_STD_BIRHTDATE = new SimpleDateFormat("dd/MM/yyyy").parse("01/07/2000");

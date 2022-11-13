@@ -20,9 +20,10 @@ import io.cucumber.java.fr.Quand;
 import io.cucumber.java.fr.Étantdonné;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Objects;
 
 import static fr.uha.ensisa.stegmiller.appintav.cucumber.UserConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +61,8 @@ public class StepDefinition {
     ValidateEventCommandHandler validateEventCommandHandler;
     @Autowired
     UpdateFavorProgressCommandHandler updateFavorProgressCommandHandler;
+    @Autowired
+    UpdateFavorPropertyCommandHandler updateFavorPropertyCommandHandler;
 
     // ============= Local Var =============
     User user;
@@ -75,8 +78,11 @@ public class StepDefinition {
     UpdateEventOrganisationCommand.Property updateProperty;
     Object updateInformation;
     User favorManager;
-    Favor eventFavor;
     Error error;
+    String serviceName;
+    String serviceDescription;
+    Favor processFavor;
+    Object favorPropertyValue;
 
     // ============= Cucumber Methods
 
@@ -255,6 +261,53 @@ public class StepDefinition {
         }
     }
 
+    @Etantdonné("le nom d'un service")
+    public void leNomDuService(){
+        serviceName = FAVOR_TITLE;
+    }
+
+    @Etantdonné("la description d'un service")
+    public void laDescriptionDunService(){
+        serviceDescription = FAVOR_DESCRIPTION;
+    }
+
+    @Etantdonné("le service n'a pas de responsable")
+    public void leServicenAPasDeResponsable(){
+
+    }
+
+    @Etantdonné("une nouvelle valeur pour la propriété {propriété} du service")
+    public void uneNouvelleValeurPourLaProprieteDuService(String string){
+        switch (string) {
+            case "nom" -> favorPropertyValue = NEW_FAVOR_NAME;
+            case "description" -> favorPropertyValue = NEW_FAVOR_DESCRIPTION;
+            case "pourcentage" -> favorPropertyValue = NEW_FAVOR_PERCENTAGE;
+            default -> fail();
+        }
+    }
+
+    @Etantdonné("le service a un responsable")
+    public void leServiceAUnResponsable(){
+        le_responsable_du_service();
+        try {
+            favorTakenByUserCommandHandler.handle(new FavorTakenByUserCommand(favorManager,event,favor));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Etantdonné("une nouvelle valeur pour le pourcentage")
+    public void uneNouvelleValeurPourLePourcentage(){
+        favor.setProgress(NEW_FAVOR_PERCENTAGE);
+    }
+
+    @Etantdonné("le pourcentage du service est inférieur à 100%")
+    public void lePourcentageDuServiceEstInferieurA100(){
+        favor.setProgress(20);
+    }
+
     // ================ Quand ================
 
     @Quand("il accède à l'application")
@@ -414,7 +467,56 @@ public class StepDefinition {
         }
     }
 
+    @Quand("l'organisateur ajoute un service à l'event")
+    public void lOrganisateurAjouteUnServiceAlEvent(){
+        try{
+            processFavor = createFavorCommandHandler.handle(new CreateFavorCommand(event,new Favor(serviceName,serviceDescription), user));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
 
+    @Quand("l'organisateur met à jour la {propriété} du service")
+    public void l_organisateur_met_à_jour_le_service(String string){
+        UpdateFavorPropertyCommand.Property property = null;
+        switch (string) {
+            case "nom" -> property = UpdateFavorPropertyCommand.Property.NAME;
+            case "description" -> property = UpdateFavorPropertyCommand.Property.DESCRIPTION;
+            case "pourcentage" -> property = UpdateFavorPropertyCommand.Property.PERCENTAGE;
+            default -> fail();
+        }
+        try {
+            updateFavorPropertyCommandHandler.handle(new UpdateFavorPropertyCommand(property, favorPropertyValue, favor));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Quand("l'organisateur met à jour le pourcentage du service")
+    public void lOrganisateurMetAJourLePourcentageDuService(){
+        try {
+            updateFavorPropertyCommandHandler.handle(new UpdateFavorPropertyCommand(UpdateFavorPropertyCommand.Property.PERCENTAGE, 20, favor));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Quand("le responsable met à jour le pourcentage du service")
+    public void leResponsableMetAJourLePourcentageDuService(){
+        try {
+            updateFavorPropertyCommandHandler.handle(new UpdateFavorPropertyCommand(UpdateFavorPropertyCommand.Property.PERCENTAGE, 20, favor));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
 
     // ================ Alors ================
 
@@ -522,5 +624,42 @@ public class StepDefinition {
     @Alors("l'event est donc au statut {string}")
     public void l_event_est_donc_au_statut(String string) {
         assertEquals(ParameterTypes.sStatut(string),processEvent.getStatut());
+    }
+
+    @Alors("le service est créé")
+    public void leServiceEstCree(){
+        assertNotNull(processFavor);
+    }
+
+    @Alors("le pourcentage du service est à {int}%")
+    public void lePourcentageDuServiceEstAPourcent(int int1){
+        assertEquals(processFavor.getProgress(), int1);
+    }
+
+    @Alors("le service est ajouté aux services de l'event")
+    public void leServiceEstAjouteAuxServicesDelEvent(){
+        boolean isContains = false;
+        for(var e : event.getFavors().entrySet()){
+            if (e.getKey().getId().equals(processFavor.getId())) {
+                isContains = true;
+                break;
+            }
+        }
+        assertTrue(isContains);
+    }
+
+    @Alors("le {propriété} du service est mise à jour")
+    public void la_propriete_du_service_est_mise_à_jour(String string) {
+        switch (string) {
+            case "nom" -> assertEquals(favor.getTitle(),NEW_FAVOR_NAME);
+            case "description" -> assertEquals(favor.getDescription(),NEW_FAVOR_DESCRIPTION);
+            case "pourcentage" -> assertEquals(favor.getProgress(),NEW_FAVOR_PERCENTAGE);
+            default -> fail();
+        }
+    }
+
+    @Alors("le pourcentage du service est mis à jour")
+    public void le_pourcentage_du_service_est_mis_à_jour() {
+        assertEquals(favor.getProgress(),20);
     }
 }

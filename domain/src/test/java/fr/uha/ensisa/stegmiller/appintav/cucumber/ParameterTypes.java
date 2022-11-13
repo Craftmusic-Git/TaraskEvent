@@ -55,4 +55,9 @@ public class ParameterTypes {
                 return Statut.ERROR;
         }
     }
+
+    @ParameterType("nom|description|pourcentage")
+    public String propriété(String value){
+        return value;
+    }
 }
