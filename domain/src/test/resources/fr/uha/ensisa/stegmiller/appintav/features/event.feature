@@ -8,7 +8,7 @@ Scénario: Un utilisateur crée un event
     * l'adresse de l'event
     Quand l'utilisateur crée l'event
     Alors l'event est créé
-    Et l'event est au statut "Organisation"
+    Et l'event est donc au statut "Organisation"
     Et l'utilisateur est organisateur de l'event
 
 Plan du scénario: Organiser l'event
@@ -53,7 +53,7 @@ Scénario: Validation d'un event sans service
     Et que l'event n'a pas de service
     Et l'organisateur de l'event
     Quand l'organisateur valide l'event
-    Alors l'event est au statut "Prêt"
+    Alors l'event est donc au statut "Prêt"
 
 Scénario: Validation d'un event avec tous les services à 100%
     Étant donné un event
@@ -62,7 +62,7 @@ Scénario: Validation d'un event avec tous les services à 100%
     Et tous les services de l'event ont un pourcentage de 100%
     Et l'organisateur de l'event
     Quand l'organisateur valide l'event
-    Alors l'event est au statut "Prêt"
+    Alors l'event est donc au statut "Prêt"
 
 Scénario: Validation d'un event avec des services incomplets
     Étant donné un event
@@ -71,7 +71,7 @@ Scénario: Validation d'un event avec des services incomplets
     Et qu'au moins un service de l'event a un pourcentage inférieur à 100%
     Et l'organisateur de l'event
     Quand l'organisateur valide l'event
-    Alors l'event est au statut "En cours"
+    Alors l'event est donc au statut "En cours"
 
 Scénario: Complétion du dernier service
     Étant donné un event
@@ -80,4 +80,4 @@ Scénario: Complétion du dernier service
     Et le responsable du service
     Quand le responsable du service modifie le pourcentage du service à 100%
     Et que tous les services de l'event ont un pourcentage de 100%
-    Alors l'event est au statut "Prêt"
+    Alors l'event est donc au statut "Prêt"

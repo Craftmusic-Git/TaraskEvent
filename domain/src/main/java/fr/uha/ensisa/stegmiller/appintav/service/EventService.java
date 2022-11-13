@@ -9,9 +9,12 @@ import java.util.Optional;
 
 @Service
 public interface EventService {
+    Event createEvent(Event event);
     Event addEvent(Event event);
+    Event updateEvent(Event event);
     Optional<Event> getEventById(final Long id);
     List<Event> getEventOfSpecifiedUserID(final Long id);
     void removeAnUserFromAllEvent(final User user);
     Event addUserToEvent(final Event event, final User user);
+
 }

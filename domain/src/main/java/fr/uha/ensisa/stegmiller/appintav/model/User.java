@@ -1,5 +1,6 @@
 package fr.uha.ensisa.stegmiller.appintav.model;
 
+import fr.uha.ensisa.stegmiller.appintav.core.Model;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class User {
+public class User extends Model {
 
     public enum Status {
         UNKNOWN,
@@ -15,7 +16,6 @@ public class User {
         DISCONNECTED
     }
 
-    private Long id;
     private String name;
     private String firstname;
     private Date birthdate;

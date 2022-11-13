@@ -24,6 +24,13 @@ public class MockEventService implements EventService {
     }
 
     @Override
+    public Event createEvent(Event event) {
+        Event rep = addEvent(event);
+        rep.setStatut(Event.Statut.CONFIGURATION);
+        return rep;
+    }
+
+    @Override
     public Event addEvent(Event event) {
         boolean isUnique = true;
 
@@ -46,6 +53,16 @@ public class MockEventService implements EventService {
         }
 
         return getEventById(event.getId()).get();
+    }
+
+    @Override
+    public Event updateEvent(Event event) {
+        for (var e: events) {
+            if (Objects.equals(e.getId(), event.getId())) {
+                e = event;
+            }
+        }
+        return event;
     }
 
     @Override

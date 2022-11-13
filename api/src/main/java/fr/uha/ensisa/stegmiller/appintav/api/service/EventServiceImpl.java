@@ -20,6 +20,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public Event createEvent(Event event) {
+        Event rep = addEvent(event);
+        event.setStatut(Event.Statut.CONFIGURATION);
+        return rep;
+    }
+
+    @Override
     public Event addEvent(Event event) {
         boolean isUnique = true;
 

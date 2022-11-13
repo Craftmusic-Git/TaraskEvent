@@ -16,16 +16,17 @@ public abstract class UserConstants {
     public static final String FAVOR_DESCRIPTION = "Ammener les boissons";
     public static final String EVENT_NAME = "Anniversaire";
     public static final Address EVENT_ADDRESS;
-
+    public static final Date EVENT_DATE;
     static {
         try {
             USER_STD_BIRHTDATE = new SimpleDateFormat("dd/MM/yyyy").parse("01/07/2000");
+            EVENT_DATE = new SimpleDateFormat("dd/MM/yyyy").parse("01/07/2023");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
         EVENT_ADDRESS = new Address();
         EVENT_ADDRESS.setCity(new City("Strasbourg"));
-        EVENT_ADDRESS.setCode(new CityCode("67 000"));
+        EVENT_ADDRESS.setCode(new CityCode("67000"));
         EVENT_ADDRESS.setWay("Rue des bouchers");
         EVENT_ADDRESS.setNumber(42);
     }

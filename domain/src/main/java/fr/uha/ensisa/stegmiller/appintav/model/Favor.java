@@ -1,10 +1,10 @@
 package fr.uha.ensisa.stegmiller.appintav.model;
 
+import fr.uha.ensisa.stegmiller.appintav.core.Model;
 import lombok.Data;
 
 @Data
-public class Favor {
-    private Long id;
+public class Favor extends Model {
     private String title;
     private String description;
     private Float progress;

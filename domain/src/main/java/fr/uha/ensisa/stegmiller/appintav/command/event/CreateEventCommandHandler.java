@@ -31,9 +31,9 @@ public class CreateEventCommandHandler implements Command.Handler<CreateEventCom
             throw new Error("User is null");
         }
 
-        var joinCommand = new JoinEventCommand(eventService.addEvent(command.getEvent()),command.getUser());
+        var joinCommand = new JoinEventCommand(eventService.createEvent(command.getEvent()),command.getUser());
+        command.getUser().getEventOrganized().add(joinCommand.getEvent());
         LOGGER.info("Event : " + joinCommand.getEvent().getName() + " created by " + command.getUser());
         return joinEventCommandHandler.handle(joinCommand);
-
     }
 }

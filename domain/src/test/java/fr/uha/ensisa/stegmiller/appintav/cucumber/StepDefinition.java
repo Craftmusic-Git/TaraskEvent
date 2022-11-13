@@ -1,9 +1,6 @@
 package fr.uha.ensisa.stegmiller.appintav.cucumber;
 
-import fr.uha.ensisa.stegmiller.appintav.command.event.CreateEventCommand;
-import fr.uha.ensisa.stegmiller.appintav.command.event.CreateEventCommandHandler;
-import fr.uha.ensisa.stegmiller.appintav.command.event.JoinEventCommand;
-import fr.uha.ensisa.stegmiller.appintav.command.event.JoinEventCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.command.event.*;
 import fr.uha.ensisa.stegmiller.appintav.command.favor.CreateFavorCommand;
 import fr.uha.ensisa.stegmiller.appintav.command.favor.CreateFavorCommandHandler;
 import fr.uha.ensisa.stegmiller.appintav.command.favor.FavorTakenByUserCommand;
@@ -12,6 +9,7 @@ import fr.uha.ensisa.stegmiller.appintav.command.user.*;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockEventService;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockFavorService;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockUserService;
+import fr.uha.ensisa.stegmiller.appintav.model.Address;
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
 import fr.uha.ensisa.stegmiller.appintav.model.Favor;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
@@ -25,7 +23,11 @@ import io.cucumber.java.fr.Quand;
 import io.cucumber.java.fr.Étantdonné;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 
 import static fr.uha.ensisa.stegmiller.appintav.cucumber.UserConstants.*;
@@ -58,6 +60,8 @@ public class StepDefinition {
     CreateFavorCommandHandler createFavorCommandHandler;
     @Autowired
     CreateEventCommandHandler createEventCommandHandler;
+    @Autowired
+    UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandle;
 
     // ============= Local Var =============
     User user;
@@ -67,6 +71,15 @@ public class StepDefinition {
     CreateUserCommand createUserCommand;
     AuthentificationUserCommand authentificationUserCommand;
     Exception exception;
+    Address eventAddress;
+    String eventName;
+    Event processEvent;
+    UpdateEventOrganisationCommand.Property updateProperty;
+    Object updateInformation;
+
+    Error error;
+
+    // ============= Cucumber Methods
 
     @Before
     public void before(){
@@ -150,12 +163,55 @@ public class StepDefinition {
 
     @Etantdonné("le nom de l'event")
     public void leNomDelEvent(){
-        event.setName(EVENT_NAME);
+        eventName = EVENT_NAME;
     }
 
     @Etantdonné("l'adresse de l'event")
     public void lAdresseDelEvent(){
-        event.setLocationAddress(EVENT_ADDRESS);
+        eventAddress = EVENT_ADDRESS;
+    }
+
+    @Etantdonné("l'event est au statut \"Organisation\"")
+    public void etantlEventEstAuStatutOrganisation(){
+        unUtilisateurConecte();
+        lAdresseDelEvent();
+        lUtilisateurCreelEvent();
+        event = processEvent;
+        processEvent = null;
+    }
+
+    @Etantdonné("son organisateur")
+    public void sonOrganisateur(){
+
+    }
+
+    @Étantdonné("une {date} pour une date de l'event")
+    public void une_pour_une_date_de_l_event(Date date) {
+        updateInformation = date;
+        updateProperty = UpdateEventOrganisationCommand.Property.DATE;
+    }
+
+    @Étantdonné("une {int} pour une capacité de l'event")
+    public void une_pour_une_capacité_de_l_event(Integer int1) {
+        updateInformation = int1;
+        updateProperty = UpdateEventOrganisationCommand.Property.CAPACITY;
+    }
+
+    @Étantdonné("une {bool} pour une en exterieur de l'event")
+    public void une_non_pour_une_en_exterieur_de_l_event(Boolean bool) {
+        updateInformation = bool;
+        updateProperty = UpdateEventOrganisationCommand.Property.EXTERN;
+    }
+
+    @Étantdonné("une {int} pour une age limite de l'event")
+    public void une_pour_une_age_limite_de_l_event(Integer int1) {
+        updateInformation = int1;
+        updateProperty = UpdateEventOrganisationCommand.Property.LIMIT_AGE;
+    }
+
+    @Etantdonné("que l'event est au statut {statut}")
+    public void quelEventEstAuStatut(Event.Statut statut){
+        event.setStatut(statut);
     }
 
     // ================ Quand ================
@@ -216,10 +272,62 @@ public class StepDefinition {
     @Quand("l'utilisateur crée l'event")
     public void lUtilisateurCreelEvent(){
         try {
-            createEventCommandHandler.handle(new CreateEventCommand(user,event));
+            processEvent = createEventCommandHandler.handle(new CreateEventCommand(user,new Event(eventName, eventAddress)));
         } catch (Exception e){
             exception = e;
         }
+    }
+
+    @Quand("l'organisateur met à jour la date de l'event avec l'{date}")
+    public void l_organisateur_met_à_jour_la_date_de_l_event_avec_l(Date date) {
+        try {
+            processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
+        } catch (Exception e){
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Quand("l'organisateur met à jour la capacité de l'event avec l'{int}")
+    public void l_organisateur_met_à_jour_la_capacité_de_l_event_avec_l(Integer int1) {
+        try {
+            processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
+        } catch (Exception e){
+            exception = e;
+        }
+    }
+
+    @Quand("l'organisateur met à jour la en exterieur de l'event avec l'{bool}")
+    public void l_organisateur_met_à_jour_la_en_exterieur_de_l_event_avec_l_non(Boolean bool) {
+        try {
+            processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
+        } catch (Exception e){
+            exception = e;
+        }
+    }
+
+    @Quand("l'organisateur met à jour la age limite de l'event avec l'{int}")
+    public void l_organisateur_met_à_jour_la_age_limite_de_l_event_avec_l(Integer int1) {
+        try {
+            processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
+        } catch (Exception e){
+            exception = e;
+        }
+    }
+
+    @Quand("l'organisateur met à jour l'event")
+    public void lOrganisateurMetAJourlEvent(){
+        try {
+            processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, UpdateEventOrganisationCommand.Property.DATE, EVENT_DATE));
+        } catch (Exception e){
+            exception = e;
+        }
+    }
+
+    @Quand("l'event est complètement renseigné")
+    public void lEventEstCompletementRenseigne(){
+
     }
 
     // ================ Alors ================
@@ -276,5 +384,61 @@ public class StepDefinition {
             }
         }
         assertTrue(isResponsable);
+    }
+
+    @Alors("l'event est créé")
+    public void lEventEstCree(){
+        assertNotNull(processEvent);
+    }
+
+    @Alors("l'event est donc au statut \"Organisation\"")
+    public void lEventEstAuStatutOrganisation(){
+        assertEquals(Event.Statut.CONFIGURATION, processEvent.getStatut());
+    }
+
+    @Alors("l'utilisateur est organisateur de l'event")
+    public void lUtilisateurEstOrganisateurDelEvent(){
+        boolean isOrganist = false;
+        for(var e : user.getEventOrganized())
+            if (Objects.equals(e.getId(), processEvent.getId())) {
+                isOrganist = true;
+                break;
+            }
+        assertTrue(isOrganist);
+    }
+
+    @Alors("la date de l'event est mise à jour avec l'{date}")
+    public void la_date_de_l_event_est_mise_à_jour_avec_l(Date date) {
+        assertEquals(processEvent.getOrganization().getDate(), date);
+    }
+
+    @Alors("la capacité de l'event est mise à jour avec l'{int}")
+    public void la_capacité_de_l_event_est_mise_à_jour_avec_l(Integer int1) {
+        assertEquals(processEvent.getOrganization().getCapacity(), int1);
+    }
+
+    @Alors("la en exterieur de l'event est mise à jour avec l'{bool}")
+    public void la_en_exterieur_de_l_event_est_mise_à_jour_avec_l_non(Boolean bool) {
+        assertEquals(processEvent.getOrganization().getIsOutside(), bool);
+    }
+
+    @Alors("la age limite de l'event est mise à jour avec l'{int}")
+    public void la_age_limite_de_l_event_est_mise_à_jour_avec_l(Integer int1) {
+        assertEquals(processEvent.getOrganization().getAgeLimit(), int1);
+    }
+
+    @Alors("l'event est au statut \"En attente\"")
+    public void lEventEstAuStatutEnAttente(){
+        assertEquals(Event.Statut.WAITING,processEvent.getStatut());
+    }
+
+    @Alors("le scoring est calculé")
+    public void leScoringEstCalcule(){
+        assertNotEquals(0, event.getOrganization().getScoring().getGlobalScore());
+    }
+
+    @Alors("le scoring est recalculé")
+    public void leScoringEstRecalcule(){
+        assertNotEquals(0, event.getOrganization().getScoring().getGlobalScore());
     }
 }
