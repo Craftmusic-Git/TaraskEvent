@@ -1,6 +1,8 @@
 package fr.uha.ensisa.stegmiller.appintav.model.value;
 
-public class CityCode {
+import fr.uha.ensisa.stegmiller.appintav.core.Model;
+
+public class CityCode extends Model {
     private String code;
 
     public CityCode(String value) {

@@ -1,6 +1,8 @@
 package fr.uha.ensisa.stegmiller.appintav.model.value;
 
-public class Country {
+import fr.uha.ensisa.stegmiller.appintav.core.Model;
+
+public class Country extends Model {
     private String name;
 
     public Country(String name){
