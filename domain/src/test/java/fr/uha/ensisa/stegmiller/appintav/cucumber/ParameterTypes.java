@@ -1,6 +1,7 @@
 package fr.uha.ensisa.stegmiller.appintav.cucumber;
 
 import fr.uha.ensisa.stegmiller.appintav.model.Event.Statut;
+import fr.uha.ensisa.stegmiller.appintav.model.Organization;
 import io.cucumber.java.ParameterType;
 
 import java.text.ParseException;
@@ -56,8 +57,36 @@ public class ParameterTypes {
         }
     }
 
+    @ParameterType("Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi|Dimanche")
+    public Organization.Day day(String value){
+        switch (value){
+            case "Lundi" -> { return Organization.Day.MONDAY; }
+            case "Mardi" -> { return Organization.Day.TUESDAY; }
+            case "Mercredi" -> { return Organization.Day.WEDNESDAY; }
+            case "Jeudi" -> { return Organization.Day.THURSDAY; }
+            case "Vendredi" -> { return Organization.Day.FRIDAY; }
+            case "Samedi" -> { return Organization.Day.SATURDAY; }
+            case "Dimanche" -> { return Organization.Day.SUNDAY; }
+            default -> { return null; }
+        }
+    }
+
+    @ParameterType("soleil|neige|tempête|pluie")
+    public Organization.Weather weather(String value){
+        switch (value){
+            case "soleil" -> { return Organization.Weather.SUNNY; }
+            case "neige" -> { return Organization.Weather.SNOWING; }
+            case "tempête" -> { return Organization.Weather.TEMPEST; }
+            case "pluie" -> { return Organization.Weather.RAINING; }
+            default -> { return null; }
+        }
+    }
+
     @ParameterType("nom|description|pourcentage")
     public String propriété(String value){
         return value;
     }
+
+
+
 }

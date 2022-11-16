@@ -7,6 +7,26 @@ import java.util.Date;
 
 @Data
 public class Organization extends Model {
+
+    public enum Day{
+        MONDAY,
+        TUESDAY,
+        WEDNESDAY,
+        THURSDAY,
+        FRIDAY,
+        SATURDAY,
+        SUNDAY
+    }
+
+    public enum Weather {
+        SUNNY,
+        RAINING,
+        SNOWING,
+        TEMPEST
+    }
+
+    Day day;
+    Weather weather;
     private Date date;
     private Integer capacity;
     private Boolean isOutside;

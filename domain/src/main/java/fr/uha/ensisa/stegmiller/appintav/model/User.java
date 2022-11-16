@@ -26,6 +26,9 @@ public class User extends Model {
 
     public User(){
         archived = Boolean.FALSE;
+        this.archived = Boolean.FALSE;
+        eventOrganized = new ArrayList<>();
+        managedFavor = new ArrayList<>();
     }
 
     public User(String name, String firstname, Date birthDate){

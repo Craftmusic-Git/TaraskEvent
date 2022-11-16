@@ -1,9 +1,9 @@
 package fr.uha.ensisa.stegmiller.appintav.model;
 
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
-import lombok.Data;
 
 public class Scoring extends Model {
+
     int weatherScore;
     int dateScore;
     int globalScore;

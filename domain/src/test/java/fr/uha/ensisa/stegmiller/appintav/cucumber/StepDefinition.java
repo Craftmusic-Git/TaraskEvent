@@ -2,16 +2,21 @@ package fr.uha.ensisa.stegmiller.appintav.cucumber;
 
 import fr.uha.ensisa.stegmiller.appintav.command.event.*;
 import fr.uha.ensisa.stegmiller.appintav.command.favor.*;
+import fr.uha.ensisa.stegmiller.appintav.command.link.CreateLinkCommand;
+import fr.uha.ensisa.stegmiller.appintav.command.link.CreateLinkCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.command.link.JoinEventByLinkCommand;
+import fr.uha.ensisa.stegmiller.appintav.command.link.JoinEventByLinkCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.command.scoring.CalculateScoringCommand;
+import fr.uha.ensisa.stegmiller.appintav.command.scoring.CalculateScoringCommandHandler;
 import fr.uha.ensisa.stegmiller.appintav.command.user.*;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockEventService;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockFavorService;
+import fr.uha.ensisa.stegmiller.appintav.mocking.MockLinkServicce;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockUserService;
-import fr.uha.ensisa.stegmiller.appintav.model.Address;
-import fr.uha.ensisa.stegmiller.appintav.model.Event;
-import fr.uha.ensisa.stegmiller.appintav.model.Favor;
-import fr.uha.ensisa.stegmiller.appintav.model.User;
+import fr.uha.ensisa.stegmiller.appintav.model.*;
 import fr.uha.ensisa.stegmiller.appintav.service.EventService;
 import fr.uha.ensisa.stegmiller.appintav.service.FavorService;
+import fr.uha.ensisa.stegmiller.appintav.service.LinkService;
 import fr.uha.ensisa.stegmiller.appintav.service.UserService;
 import io.cucumber.java.Before;
 import io.cucumber.java.fr.Alors;
@@ -40,6 +45,9 @@ public class StepDefinition {
     @Autowired
     FavorService favorService;
 
+    @Autowired
+    LinkService linkService;
+
     // ============= CommandHandler =============
     @Autowired
     CreateUserCommandHandler createUserCommandHandler;
@@ -63,7 +71,12 @@ public class StepDefinition {
     UpdateFavorProgressCommandHandler updateFavorProgressCommandHandler;
     @Autowired
     UpdateFavorPropertyCommandHandler updateFavorPropertyCommandHandler;
-
+    @Autowired
+    CreateLinkCommandHandler createLinkCommandHandler;
+    @Autowired
+    JoinEventByLinkCommandHandler joinEventByLinkCommandHandler;
+    @Autowired
+    CalculateScoringCommandHandler calculateScoringCommandHandler;
     // ============= Local Var =============
     User user;
     User processUser;
@@ -83,7 +96,13 @@ public class StepDefinition {
     String serviceDescription;
     Favor processFavor;
     Object favorPropertyValue;
-
+    Link link;
+    Organization.Day scoringDay;
+    Organization.Weather scoringWeather;
+    Boolean scoringVacancy;
+    Boolean scoringExterior;
+    int scoringHeat;
+    Scoring scoring;
     // ============= Cucumber Methods
 
     @Before
@@ -94,6 +113,8 @@ public class StepDefinition {
         ((MockUserService)userService).setUsers(new ArrayList<>());
         ((MockFavorService)favorService).setCounts(0L);
         ((MockFavorService)favorService).setFavors(new ArrayList<>());
+        ((MockLinkServicce)linkService).setCount(0L);
+        ((MockLinkServicce)linkService).setLinks(new ArrayList<>());
     }
     // ================= utils ==================
 
@@ -308,6 +329,43 @@ public class StepDefinition {
         favor.setProgress(20);
     }
 
+    @Etantdonné("un lien d'invitation à un event")
+    public void unLienDInvitationAUnEvent(){
+        unEvent();
+        try {
+            link = createLinkCommandHandler.handle(new CreateLinkCommand(event));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Etantdonné("le {day} de la date de l'event")
+    public void leJourDeLaSemaineDeLaDateDelEvent(Organization.Day day){
+        scoringDay = day;
+    }
+
+    @Etantdonné("la date de l'event tombe pendant les {bool} ou un jour férié")
+    public void laDateDelEventTombePendantLesVacancesOuUnJourFérié(Boolean bool){
+        scoringVacancy = bool;
+    }
+
+    @Etantdonné("l'état {bool} de l'event")
+    public void lEtatEnExterieurDelEvent(Boolean bool){
+        scoringExterior = bool;
+    }
+
+    @Etantdonné("la {weather} prévue")
+    public void laMeteoPrevue(Organization.Weather weather){
+        scoringWeather = weather;
+    }
+
+    @Etantdonné("la {int} prévue")
+    public void laTemperaturePrevue(int temp){
+        scoringHeat = temp;
+    }
+
     // ================ Quand ================
 
     @Quand("il accède à l'application")
@@ -518,6 +576,69 @@ public class StepDefinition {
         }
     }
 
+    @Quand("l'utilisateur accède à l'application via le lien d'invitation")
+    public void l_utilisateur_accède_à_l_application_via_le_lien_d_invitation() {
+        try {
+            joinEventByLinkCommandHandler.handle(new JoinEventByLinkCommand(user, link));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
+    @Quand("l'utilisateur choisit de s'inscrire")
+    public void l_utilisateur_choisit_de_s_inscrire() {
+        user.setName(USER_STD_NAME);
+        user.setFirstname(USER_STD_FIRSTNAME);
+        user.setBirthdate(USER_STD_BIRHTDATE);
+        try{
+            processUser = createUserCommandHandler.handle(new CreateUserCommand(user));
+            user = processUser;
+            processEvent = joinEventByLinkCommandHandler.handle(new JoinEventByLinkCommand(
+                    user,
+                    link
+            ));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+        event = processEvent;
+    }
+
+    @Quand("l'utilisateur chosit de s'authentifier")
+    public void l_utilisateur_chosit_de_s_authentifier() {
+        user.setName(USER_STD_NAME);
+        user.setFirstname(USER_STD_FIRSTNAME);
+        user.setBirthdate(USER_STD_BIRHTDATE);
+        userService.createUser(user); // l'utilisateur est présent dans la base.
+        try{
+            processUser = authentificationUserCommandHandler.handle(new AuthentificationUserCommand(user));
+            user = processUser;
+            processEvent = joinEventByLinkCommandHandler.handle(new JoinEventByLinkCommand(
+                    user,
+                    link
+            ));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+        event = processEvent;
+    }
+
+    @Quand("le scoring de l'event est calculé")
+    public void leScoringDelEventEstCalcule(){
+        try {
+            scoring = calculateScoringCommandHandler.handle(new CalculateScoringCommand(scoringDay,scoringWeather,scoringHeat,scoringExterior,scoringVacancy));
+        } catch (Exception e) {
+            exception = e;
+        } catch (Error e){
+            error = e;
+        }
+    }
+
     // ================ Alors ================
 
     @Alors("l'application lui demande de s'inscrire ou de se connecter")
@@ -661,5 +782,21 @@ public class StepDefinition {
     @Alors("le pourcentage du service est mis à jour")
     public void le_pourcentage_du_service_est_mis_à_jour() {
         assertEquals(favor.getProgress(),20);
+    }
+
+    @Alors("le scoring météo vaut {int}")
+    public void le_scoring_météo_vaut(Integer int1) {
+        assertEquals(int1,scoring.getWeatherScore());
+    }
+
+    // Modification d'un résultat dans le fichier feature car le resultat attendu était différent du model voulu.
+    @Alors("le scoring date vaut {int}")
+    public void le_scoring_date_vaut(Integer int1) {
+        assertEquals(int1, scoring.getDateScore());
+    }
+
+    @Alors("le scoring vaut ??")
+    public void le_scoring_vaut() {
+
     }
 }

@@ -41,22 +41,10 @@ public class UpdateEventOrganisationCommandHandler implements Command.Handler<Up
             LOGGER.warning("Event don't have the good statut");
         }
         switch (command.getPropertyType()){
-            case DATE -> {
-                event.getOrganization().setDate((Date)command.getInformation());
-                break;
-            }
-            case CAPACITY -> {
-                event.getOrganization().setCapacity((Integer)command.getInformation());
-                break;
-            }
-            case EXTERN -> {
-                event.getOrganization().setIsOutside((Boolean) command.getInformation());
-                break;
-            }
-            case LIMIT_AGE -> {
-                event.getOrganization().setAgeLimit((Integer) command.getInformation());
-                break;
-            }
+            case DATE -> event.getOrganization().setDate((Date)command.getInformation());
+            case CAPACITY -> event.getOrganization().setCapacity((Integer)command.getInformation());
+            case EXTERN -> event.getOrganization().setIsOutside((Boolean) command.getInformation());
+            case LIMIT_AGE -> event.getOrganization().setAgeLimit((Integer) command.getInformation());
         }
 
         event = eventService.updateEvent(event);
