@@ -2,8 +2,21 @@ package fr.uha.ensisa.stegmiller.appintav.model.value;
 
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "city")
 public class City extends Model {
+
+    @Column(name = "name")
     private String name;
+
+
+    public City() {
+        name = "";
+    }
 
     public City(String value){
         name = check(value);

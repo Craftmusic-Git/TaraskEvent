@@ -1,12 +1,22 @@
 package fr.uha.ensisa.stegmiller.appintav.model;
 
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.Objects;
 
-@Data
-public class Organization extends Model {
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "organizations")
+public class Organization extends Model<Organization> {
 
     public enum Day{
         MONDAY,
@@ -25,12 +35,25 @@ public class Organization extends Model {
         TEMPEST
     }
 
+    @Column(name = "day")
     Day day;
+
+    @Column(name = "weather")
     Weather weather;
+
+    @Column(name = "date")
     private Date date;
+
+    @Column(name = "capacity")
     private Integer capacity;
+
+    @Column(name = "outside")
     private Boolean isOutside;
+
+    @Column(name = "age_limit")
     private Integer ageLimit;
+
+    @Transient
     private Scoring scoring;
 
     public Organization(){
@@ -47,5 +70,36 @@ public class Organization extends Model {
         isOutside = Boolean.FALSE;
         ageLimit = 18;
         scoring = new Scoring();
+    }
+
+    @Override
+    public Organization update(Organization model) {
+        super.update(model);
+        if(model.getIsOutside() != null)
+            this.isOutside = model.getIsOutside();
+        if(model.getDay() != null)
+            this.day = model.getDay();
+        if(model.getDate() != null)
+            this.date = model.getDate();
+        if(model.getAgeLimit() != null)
+            this.ageLimit = model.getAgeLimit();
+        if(model.getWeather() != null)
+            this.weather = model.getWeather();
+        if(model.getCapacity() != null)
+            this.capacity = model.getCapacity();
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Organization that = (Organization) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

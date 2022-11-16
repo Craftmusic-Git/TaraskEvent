@@ -1,8 +1,6 @@
 package fr.uha.ensisa.stegmiller.appintav.model;
 
-import fr.uha.ensisa.stegmiller.appintav.core.Model;
-
-public class Scoring extends Model {
+public class Scoring {
 
     int weatherScore;
     int dateScore;

@@ -3,10 +3,13 @@ package fr.uha.ensisa.stegmiller.appintav.model;
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
 import lombok.Data;
 
+import javax.persistence.*;
 import java.util.*;
 
 @Data
-public class Event extends Model {
+@Entity
+@Table(name = "events")
+public class Event extends Model<Event> {
 
     public enum Statut{
         CONFIGURATION("Organisation"), // ORGANIZATION AND CONFIGURATION STEP
@@ -28,11 +31,35 @@ public class Event extends Model {
         }
     }
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "statut")
     private Statut statut;
+
+    @OneToOne
+    @JoinColumn(name = "organization_id")
     private Organization organization;
+
+    @ManyToOne
+    @JoinColumn(name = "location_address_id")
     private Address locationAddress;
+
+    @ManyToMany
+    @JoinTable(
+            name = "guests",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "users_id")
+    )
     private List<User> guests;
+
+    @OneToMany
+    @JoinTable(
+            name = "favors_managers",
+            joinColumns = {@JoinColumn(name = "events_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "users_id", referencedColumnName = "id")}
+    )
+    @MapKeyJoinColumn(name = "favors_id")
     private Map<Favor,User> favors;
 
     public Event(){
@@ -61,5 +88,23 @@ public class Event extends Model {
             dateScore += 2;
         }
         organization.getScoring().setDateScore(dateScore);
+    }
+
+    @Override
+    public Event update(Event model) {
+        super.update(model);
+        if(model.getFavors() != null)
+            this.favors = model.getFavors();
+        if(model.getGuests() != null)
+            this.guests = model.getGuests();
+        if(model.getName() != null)
+            this.name = model.getName();
+        if(model.getStatut() != null)
+            this.statut = model.getStatut();
+        if(model.getLocationAddress() != null)
+            this.locationAddress = model.getLocationAddress();
+        if(model.getOrganization() != null)
+            this.organization = model.getOrganization();
+        return this;
     }
 }
