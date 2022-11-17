@@ -25,7 +25,6 @@ public class Favor extends Model<Favor> {
     @Column(name = "progress")
     private Integer progress;
 
-
     public Favor(String title, String description){
         this.title = title;
         this.description = description;

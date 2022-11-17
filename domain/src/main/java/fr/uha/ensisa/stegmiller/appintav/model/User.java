@@ -57,6 +57,9 @@ public class User extends Model<User> {
     private Status status;
 
     public User(){
+        this.name = "";
+        this.firstname = "";
+        this.birthdate = null;
         archived = Boolean.FALSE;
         this.archived = Boolean.FALSE;
         eventOrganized = new ArrayList<>();

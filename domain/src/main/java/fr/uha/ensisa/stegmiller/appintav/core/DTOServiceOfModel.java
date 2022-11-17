@@ -1,16 +1,15 @@
 package fr.uha.ensisa.stegmiller.appintav.core;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public interface DTOServiceOfModel<DTO extends DTOofModel<M>, M extends Model>{
+
+public interface DTOServiceOfModel<DTO extends DTOofModel<M>, M extends Model<M>>{
     DTO newInstanceOfDTO();
-    CrudRepository<M, Long> getRepository();
+    JpaRepository<M, Long> getRepository();
 
     default M create(DTO dto){
         return getRepository().save(dtoToModel(dto));

@@ -3,19 +3,25 @@ package fr.uha.ensisa.stegmiller.appintav.api.service;
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
 import fr.uha.ensisa.stegmiller.appintav.model.Favor;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
+import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.EventDAORepository;
+import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.FavorDAORepository;
+import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.UserDAORepository;
 import fr.uha.ensisa.stegmiller.appintav.service.FavorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 public class FavorServiceImpl implements FavorService {
-    private ArrayList<Favor> favors;
-    private Long counts;
+    @Autowired
+    FavorDAORepository favorDAO;
+
+    @Autowired
+    EventDAORepository eventDAO;
+
+    @Autowired
+    UserDAORepository userDAO;
 
     public FavorServiceImpl(){
-        counts = 0L;
-        favors = new ArrayList<>();
     }
 
     @Override
@@ -24,27 +30,21 @@ public class FavorServiceImpl implements FavorService {
         rep.setDescription(favor.getDescription());
         rep.setProgress(favor.getProgress());
         rep.setTitle(favor.getTitle());
-        rep.setId(counts);
-        counts++;
-        favors.add(rep);
-        event.getFavors().put(rep,null);
-        return rep;
+        Favor var = favorDAO.save(rep);
+        event.getFavors().put(var,null);
+        eventDAO.save(event);
+        return var;
     }
 
     @Override
     public Favor addUserToFavor(Favor favor, User user) {
-        boolean isContain = false;
         user.getManagedFavor().add(favor);
+        userDAO.save(user);
         return favor;
     }
 
     @Override
     public Favor updateFavor(Favor favor) {
-        for(var f : favors)
-            if(f.getId().equals(favor.getId())) {
-                f = favor;
-                return f;
-            }
-        return favor;
+        return favorDAO.save(favor);
     }
 }

@@ -15,7 +15,7 @@ import java.util.Objects;
 public abstract class Model<SELF extends Model<SELF>> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     protected Long id;
 
     public SELF update(SELF model){

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+
+    <persistence-unit name="tarask" transaction-type="RESOURCE_LOCAL">
+        <class>fr.uha.ensisa.stegmiller.appintav.model.Organization</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.Favor</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.User</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.Address</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.Event</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.Link</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.value.CityCode</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.value.City</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.value.Country</class>
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/tarask" />
+            <property name="javax.persistence.jdbc.user" value="admin" />
+            <property name="javax.persistence.jdbc.password" value="admin" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>
