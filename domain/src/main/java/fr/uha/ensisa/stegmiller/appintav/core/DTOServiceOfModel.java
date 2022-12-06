@@ -48,17 +48,13 @@ public interface DTOServiceOfModel<DTO extends DTOofModel<M>, M extends Model<M>
 
     default Iterable<M> dtoToModelList(Iterable<DTO> dtos){
         List<M> rep = new ArrayList<>();
-        for(DTO dto : dtos){
-            rep.add(dtoToModel(dto));
-        }
+        dtos.forEach(dto -> rep.add(dtoToModel(dto)));
         return rep;
     }
 
     default Iterable<DTO> modelToDTOList(Iterable<M> models){
         List<DTO> rep = new ArrayList<>();
-        for(M m : models){
-            rep.add(modelToDTO(m));
-        }
+        models.forEach(m -> rep.add(modelToDTO(m)));
         return rep;
     }
 

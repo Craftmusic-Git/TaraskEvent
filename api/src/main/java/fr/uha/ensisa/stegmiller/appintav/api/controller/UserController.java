@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     CreateUserCommandHandler createUserCommandHandler;
 
-    @GetMapping
+    @GetMapping(value = "all")
     public Iterable<UserDto> getAllUser(){
         return userDtoService.getAll();
     }
