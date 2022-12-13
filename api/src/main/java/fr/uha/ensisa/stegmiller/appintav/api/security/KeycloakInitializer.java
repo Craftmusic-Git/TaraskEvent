@@ -14,6 +14,12 @@ public class KeycloakInitializer implements InitializingBean {
 
     private final KeycloakInitializerConfigurationProperties keycloakProperties;
 
+    private static String REALM_ID;
+
+    public static String getRealmId() {
+        return REALM_ID;
+    }
+
     public KeycloakInitializer(Keycloak keycloak, KeycloakInitializerConfigurationProperties keycloakInitializerConfigurationProperties) {
         this.keycloak = keycloak;
         this.keycloakProperties = keycloakInitializerConfigurationProperties;
@@ -21,6 +27,7 @@ public class KeycloakInitializer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
+        REALM_ID = keycloakProperties.getRealm();
+        log.info("Keycloak initialized successfully");
     }
 }

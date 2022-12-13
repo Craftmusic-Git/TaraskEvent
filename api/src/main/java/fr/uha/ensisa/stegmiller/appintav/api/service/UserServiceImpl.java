@@ -1,9 +1,9 @@
 package fr.uha.ensisa.stegmiller.appintav.api.service;
 
+import fr.uha.ensisa.stegmiller.appintav.api.service.security.KeycloakService;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
 import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.UserDAORepository;
 import fr.uha.ensisa.stegmiller.appintav.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +14,13 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     UserDAORepository userDAO;
 
-    public UserServiceImpl(){
+    KeycloakService keycloakService;
 
+    public UserServiceImpl(UserDAORepository userDAO, KeycloakService keycloakService){
+        this.userDAO = userDAO;
+        this.keycloakService = keycloakService;
     }
 
     @Override
