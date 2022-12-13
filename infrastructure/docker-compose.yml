@@ -1,20 +1,47 @@
-version: '3.8'
+version: '3.9'
+
 services:
-  docker-postgres:
+  postgres:
     image: postgres:13.8
-    container_name: docker-postgre-tarask
-    volumes:
-      - /var/tarask/postgre/opt:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=tarask
+      POSTGRES_DB: tarask
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ./postgres/:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5433:5432"
     networks:
-      - default
-    restart: always
+      - local-tarask
+
+  postgres-keycloak:
+    image: postgres:13.8
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - ./postgresKeycloak/:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - local-tarask
+
+  keycloak:
+    depends_on:
+      - postgres-keycloak
+    container_name: local_keycloak
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgres-keycloak
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+    image: jboss/keycloak:13.0.0
+    ports:
+      - "28080:8080"
+    networks:
+      - local-tarask
 
 networks:
-  default:
-    name: docker_tarask_default
+  local-tarask:

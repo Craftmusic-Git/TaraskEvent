@@ -23,6 +23,12 @@ public class User extends Model<User> {
         DISCONNECTED
     }
 
+    @Column(name = "keycloak_id")
+    private String keycloakId;
+
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "name")
     private String name;
 

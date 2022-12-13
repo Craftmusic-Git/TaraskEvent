@@ -1,16 +1,18 @@
-package fr.uha.ensisa.stegmiller.appintav.api.controller;
+package fr.uha.ensisa.stegmiller.appintav.api.controller.secure;
 
-import fr.uha.ensisa.stegmiller.appintav.api.dto.UserDto;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.model.UserDto;
 import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.UserDtoService;
 import fr.uha.ensisa.stegmiller.appintav.command.user.CreateUserCommand;
 import fr.uha.ensisa.stegmiller.appintav.command.user.CreateUserCommandHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
-@RestController
-@RequestMapping("/api/user")
+@Slf4j
+@RestController()
+@RequestMapping("/api/auth/user")
 public class UserController {
 
     @Autowired
@@ -19,7 +21,7 @@ public class UserController {
     @Autowired
     CreateUserCommandHandler createUserCommandHandler;
 
-    @GetMapping(value = "all")
+    @GetMapping(value = "/all")
     public Iterable<UserDto> getAllUser(){
         return userDtoService.getAll();
     }
@@ -29,9 +31,9 @@ public class UserController {
         return userDtoService.modelToDTO(createUserCommandHandler.handle(new CreateUserCommand(userDtoService.dtoToModel(user))));
     }
 
-    @GetMapping("date")
-    public Date sendLocalDate(){
-        return new Date(System.currentTimeMillis());
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable long userId) {
+        userDtoService.removeById(userId);
     }
 
     @GetMapping("exemple")

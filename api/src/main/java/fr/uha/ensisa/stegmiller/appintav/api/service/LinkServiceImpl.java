@@ -6,12 +6,14 @@ import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.LinkDAOReposit
 import fr.uha.ensisa.stegmiller.appintav.service.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Random;
 
 import static fr.uha.ensisa.stegmiller.appintav.model.Link.LINK_LENGTH;
 
+@Transactional
 @Service
 public class LinkServiceImpl implements LinkService {
 

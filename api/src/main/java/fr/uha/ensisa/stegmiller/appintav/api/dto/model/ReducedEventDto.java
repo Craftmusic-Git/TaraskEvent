@@ -1,4 +1,4 @@
-package fr.uha.ensisa.stegmiller.appintav.api.dto;
+package fr.uha.ensisa.stegmiller.appintav.api.dto.model;
 
 import fr.uha.ensisa.stegmiller.appintav.core.DTO;
 import fr.uha.ensisa.stegmiller.appintav.core.DTOofModel;

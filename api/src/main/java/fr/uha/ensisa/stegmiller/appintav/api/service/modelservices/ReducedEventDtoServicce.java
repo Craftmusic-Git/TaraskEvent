@@ -1,6 +1,6 @@
 package fr.uha.ensisa.stegmiller.appintav.api.service.modelservices;
 
-import fr.uha.ensisa.stegmiller.appintav.api.dto.ReducedEventDto;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.model.ReducedEventDto;
 import fr.uha.ensisa.stegmiller.appintav.core.DTOServiceOfModel;
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
 import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.EventDAORepository;

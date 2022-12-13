@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Component
@@ -25,21 +26,24 @@ public class CreateUserCommandHandler implements Command.Handler<CreateUserComma
             throw new Error("user not defined");
 
         User user = command.getUser();
-        if(user.getName() == "") {
+        if (Objects.equals(user.getName(), "")) {
             LOGGER.warning("An user try to create new account without name");
             throw new Error("user have a empty string name");
         }
-        if(user.getFirstname() == "") {
+        if (Objects.equals(user.getFirstname(), "")) {
             LOGGER.warning("An user try to create new account without firstname");
             throw new Error("user have a empty string firstname");
         }
+
         Calendar c = Calendar.getInstance();
         c.setTime(Date.from(Instant.now()));
         c.add(Calendar.YEAR,-13);
-        if(!user.getBirthdate().before(c.getTime())) {
+
+        if (!user.getBirthdate().before(c.getTime())) {
             LOGGER.warning("User "+user.getName()+" is to young "+user.getBirthdate());
             throw new Error("user is to young " + user.getBirthdate());
         }
+
         user.setStatus(User.Status.CONNECTED);
         User userServiceRep = userService.createUser(user);
         LOGGER.info(userServiceRep + " is created");

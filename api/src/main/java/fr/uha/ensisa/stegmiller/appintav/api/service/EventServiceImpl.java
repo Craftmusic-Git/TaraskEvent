@@ -6,11 +6,13 @@ import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.EventDAOReposi
 import fr.uha.ensisa.stegmiller.appintav.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class EventServiceImpl implements EventService {
     @Autowired

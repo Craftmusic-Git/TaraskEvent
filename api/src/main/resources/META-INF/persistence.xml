@@ -14,7 +14,7 @@
         <class>fr.uha.ensisa.stegmiller.appintav.model.value.City</class>
         <class>fr.uha.ensisa.stegmiller.appintav.model.value.Country</class>
         <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/tarask" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/tarask" />
             <property name="javax.persistence.jdbc.user" value="admin" />
             <property name="javax.persistence.jdbc.password" value="admin" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect" />
