@@ -22,6 +22,7 @@ public abstract class UserConstants {
     public static final Date USER_FAVOR_MANAGER_BIRTHDATE;
     public static final String NEW_FAVOR_NAME = "Cacahuètes";
     public static final String NEW_FAVOR_DESCRIPTION = "LES CACAHUETES ! ! !";
+    public static final String PASSWORD = "azertyuiop";
     public static final int NEW_FAVOR_PERCENTAGE = 42;
     static {
         try {

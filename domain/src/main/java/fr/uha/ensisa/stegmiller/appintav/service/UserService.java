@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface UserService {
     User createUser(final User user);
     Optional<User> getUserById(final Long id);
-    List<User> searchUserByNameFirstName(final String name, final String firstName);
+    List<User> searchUserByNameLastName(final String name, final String lastName);
     void removeUser(final User user);
 }

@@ -13,22 +13,23 @@ import java.util.Date;
 public class UserDto extends DTO implements DTOofModel<User> {
 
     private String name;
-    private String firstname;
+    private String lastname;
     private Date birthdate;
     @Override
     public User modelOfDTO() {
         User rep = new User();
         rep.setId(id);
         rep.setName(name);
-        rep.setFirstname(firstname);
+        rep.setLastname(lastname);
         rep.setBirthdate(birthdate);
         return rep;
     }
 
     @Override
     public void dtoOfModel(User model) {
+        this.id = model.getId();
         this.name = model.getName();
-        this.firstname = model.getFirstname();
+        this.lastname = model.getLastname();
         this.birthdate = model.getBirthdate();
     }
 }

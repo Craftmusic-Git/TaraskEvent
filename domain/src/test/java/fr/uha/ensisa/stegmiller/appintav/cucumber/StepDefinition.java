@@ -14,10 +14,7 @@ import fr.uha.ensisa.stegmiller.appintav.mocking.MockFavorService;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockLinkServicce;
 import fr.uha.ensisa.stegmiller.appintav.mocking.MockUserService;
 import fr.uha.ensisa.stegmiller.appintav.model.*;
-import fr.uha.ensisa.stegmiller.appintav.service.EventService;
-import fr.uha.ensisa.stegmiller.appintav.service.FavorService;
-import fr.uha.ensisa.stegmiller.appintav.service.LinkService;
-import fr.uha.ensisa.stegmiller.appintav.service.UserService;
+import fr.uha.ensisa.stegmiller.appintav.service.*;
 import io.cucumber.java.Before;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Etantdonné;
@@ -47,6 +44,9 @@ public class StepDefinition {
 
     @Autowired
     LinkService linkService;
+
+    @Autowired
+    SecurityService securityService;
 
     // ============= CommandHandler =============
     @Autowired
@@ -149,15 +149,15 @@ public class StepDefinition {
     @Étantdonné("un formulaire d'inscription valide")
     public void unFormulairedInscriptionValide() {
         user.setName(USER_STD_NAME);
-        user.setFirstname(USER_STD_FIRSTNAME);
+        user.setLastname(USER_STD_FIRSTNAME);
         user.setBirthdate(USER_STD_BIRHTDATE);
-        createUserCommand = new CreateUserCommand(user);
+        createUserCommand = new CreateUserCommand(user, PASSWORD);
     }
 
     @Etantdonné("un formulaire d'authentification valide")
     public void unFormulairedAuthentificationValide() {
         user.setName(USER_STD_NAME);
-        user.setFirstname(USER_STD_FIRSTNAME);
+        user.setLastname(USER_STD_FIRSTNAME);
         user.setBirthdate(USER_STD_BIRHTDATE);
         userService.createUser(user);
         authentificationUserCommand = new AuthentificationUserCommand(user);
@@ -590,10 +590,10 @@ public class StepDefinition {
     @Quand("l'utilisateur choisit de s'inscrire")
     public void l_utilisateur_choisit_de_s_inscrire() {
         user.setName(USER_STD_NAME);
-        user.setFirstname(USER_STD_FIRSTNAME);
+        user.setLastname(USER_STD_FIRSTNAME);
         user.setBirthdate(USER_STD_BIRHTDATE);
         try{
-            processUser = createUserCommandHandler.handle(new CreateUserCommand(user));
+            processUser = createUserCommandHandler.handle(new CreateUserCommand(user, PASSWORD));
             user = processUser;
             processEvent = joinEventByLinkCommandHandler.handle(new JoinEventByLinkCommand(
                     user,
@@ -610,7 +610,7 @@ public class StepDefinition {
     @Quand("l'utilisateur chosit de s'authentifier")
     public void l_utilisateur_chosit_de_s_authentifier() {
         user.setName(USER_STD_NAME);
-        user.setFirstname(USER_STD_FIRSTNAME);
+        user.setLastname(USER_STD_FIRSTNAME);
         user.setBirthdate(USER_STD_BIRHTDATE);
         userService.createUser(user); // l'utilisateur est présent dans la base.
         try{
@@ -650,7 +650,7 @@ public class StepDefinition {
     public void lUtilisateurEstCree(){
         assertNotNull(processUser);
         assertEquals(user.getName(),processUser.getName());
-        assertEquals(user.getFirstname(),processUser.getFirstname());
+        assertEquals(user.getLastname(),processUser.getLastname());
         assertEquals(user.getArchived(),processUser.getArchived());
         assertEquals(user.getBirthdate(),processUser.getBirthdate());
     }

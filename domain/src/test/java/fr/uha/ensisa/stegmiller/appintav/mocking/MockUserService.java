@@ -39,7 +39,7 @@ public class MockUserService implements UserService {
             rep.setStatus(user.getStatus());
             rep.setArchived(user.getArchived());
             rep.setName(user.getName());
-            rep.setFirstname(user.getFirstname());
+            rep.setLastname(user.getLastname());
             rep.setBirthdate(user.getBirthdate());
             rep.setEventOrganized(user.getEventOrganized());
             rep.setManagedFavor(user.getManagedFavor());
@@ -66,10 +66,10 @@ public class MockUserService implements UserService {
     }
 
     @Override
-    public List<User> searchUserByNameFirstName(String name, String firstName) {
+    public List<User> searchUserByNameLastName(String name, String lastName) {
         ArrayList<User> rep = new ArrayList<>();
         for(var u : users)
-            if(Objects.equals(u.getName(), name) && Objects.equals(u.getFirstname(), firstName))
+            if(Objects.equals(u.getName(), name) && Objects.equals(u.getLastname(), lastName))
                 rep.add(u);
         return rep;
     }

@@ -21,7 +21,7 @@ public class AuthentificationUserCommandHandler implements Command.Handler<Authe
         if(command.getUser() == null)
             throw new Error("User is null");
         User user = command.getUser();
-        var result = userService.searchUserByNameFirstName(user.getName(), user.getFirstname());
+        var result = userService.searchUserByNameLastName(user.getName(), user.getLastname());
         if(result.isEmpty()) {
             LOGGER.info("A user try a connection");
             throw new Error("User not found !");

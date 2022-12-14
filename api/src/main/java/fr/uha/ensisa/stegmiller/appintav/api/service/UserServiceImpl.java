@@ -1,6 +1,5 @@
 package fr.uha.ensisa.stegmiller.appintav.api.service;
 
-import fr.uha.ensisa.stegmiller.appintav.api.service.security.KeycloakService;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
 import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.UserDAORepository;
 import fr.uha.ensisa.stegmiller.appintav.service.UserService;
@@ -16,11 +15,8 @@ public class UserServiceImpl implements UserService {
 
     UserDAORepository userDAO;
 
-    KeycloakService keycloakService;
-
-    public UserServiceImpl(UserDAORepository userDAO, KeycloakService keycloakService){
+    public UserServiceImpl(UserDAORepository userDAO){
         this.userDAO = userDAO;
-        this.keycloakService = keycloakService;
     }
 
     @Override
@@ -34,8 +30,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> searchUserByNameFirstName(String name, String firstName) {
-        return userDAO.findUsersByNameAndFirstname(name, firstName);
+    public List<User> searchUserByNameLastName(String name, String lastName) {
+        return userDAO.findUsersByNameAndLastname(name, lastName);
     }
 
     @Override

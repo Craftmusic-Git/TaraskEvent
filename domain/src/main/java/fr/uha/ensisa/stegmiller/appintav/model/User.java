@@ -33,7 +33,7 @@ public class User extends Model<User> {
     private String name;
 
     @Column(name = "firstname")
-    private String firstname;
+    private String lastname;
 
     @Column(name = "birthdate")
     private Date birthdate;
@@ -64,7 +64,7 @@ public class User extends Model<User> {
 
     public User(){
         this.name = "";
-        this.firstname = "";
+        this.lastname = "";
         this.birthdate = null;
         archived = Boolean.FALSE;
         this.archived = Boolean.FALSE;
@@ -72,9 +72,9 @@ public class User extends Model<User> {
         managedFavor = new ArrayList<>();
     }
 
-    public User(String name, String firstname, Date birthDate){
+    public User(String name, String lastname, Date birthDate){
         this.name = name;
-        this.firstname = firstname;
+        this.lastname = lastname;
         this.birthdate = birthDate;
         this.archived = Boolean.FALSE;
         eventOrganized = new ArrayList<>();
@@ -94,8 +94,8 @@ public class User extends Model<User> {
             this.managedFavor = model.getManagedFavor();
         if(model.getEventOrganized() != null)
             this.eventOrganized = model.getEventOrganized();
-        if(model.getFirstname() != null)
-            this.firstname = model.getFirstname();
+        if(model.getLastname() != null)
+            this.lastname = model.getLastname();
         if(model.getBirthdate() != null)
             this.birthdate = model.getBirthdate();
         return this;

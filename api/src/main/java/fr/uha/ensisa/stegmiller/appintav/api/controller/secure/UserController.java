@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@RequestBody UserDto user){
-        return userDtoService.modelToDTO(createUserCommandHandler.handle(new CreateUserCommand(userDtoService.dtoToModel(user))));
+        return userDtoService.modelToDTO(createUserCommandHandler.handle(new CreateUserCommand(userDtoService.dtoToModel(user),"azerty")));
     }
 
     @DeleteMapping("/{userId}")
@@ -40,7 +40,7 @@ public class UserController {
     public UserDto sendExemple(){
         UserDto dto = new UserDto();
         dto.setName("Kenobi");
-        dto.setFirstname("Obi-wan");
+        dto.setLastname("Obi-wan");
         dto.setBirthdate(new Date(System.currentTimeMillis()));
         return dto;
     }

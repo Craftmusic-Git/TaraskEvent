@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeycloakInitializerConfigurationProperties {
 
+    private String masterRealm;
     private String realm;
 
     private String serverUrl;
@@ -20,4 +21,5 @@ public class KeycloakInitializerConfigurationProperties {
     private String adminPassword;
 
     private String clientId;
+    private String secret;
 }

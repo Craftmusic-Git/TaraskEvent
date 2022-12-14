@@ -1,7 +1,8 @@
 package fr.uha.ensisa.stegmiller.appintav.api.service.security;
 
 import fr.uha.ensisa.stegmiller.appintav.api.security.KeycloakInitializer;
-import fr.uha.ensisa.stegmiller.appintav.api.security.KeycloakUser;
+import fr.uha.ensisa.stegmiller.appintav.model.User;
+import fr.uha.ensisa.stegmiller.appintav.service.SecurityService;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class KeycloakService {
+public class KeycloakService implements SecurityService {
 
     Keycloak keycloak;
 
@@ -24,17 +25,18 @@ public class KeycloakService {
         this.keycloakInitializer = keycloakInitializer;
     }
 
-    public String registerUser(KeycloakUser user) throws UnexpectedException {
+    @Override
+    public String registerUser(User user, String password) throws UnexpectedException {
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setUsername(user.getUsername());
         userRepresentation.setFirstName(user.getName());
-        userRepresentation.setLastName(user.getLastName());
+        userRepresentation.setLastName(user.getLastname());
         userRepresentation.setEnabled(true);
 
         CredentialRepresentation userCredentialRepresentation = new CredentialRepresentation();
         userCredentialRepresentation.setType(CredentialRepresentation.PASSWORD);
         userCredentialRepresentation.setTemporary(false);
-        userCredentialRepresentation.setValue(user.getPassword());
+        userCredentialRepresentation.setValue(password);
         userRepresentation.setCredentials(List.of(userCredentialRepresentation));
 
         keycloak.realm(KeycloakInitializer.getRealmId()).users().create(userRepresentation);

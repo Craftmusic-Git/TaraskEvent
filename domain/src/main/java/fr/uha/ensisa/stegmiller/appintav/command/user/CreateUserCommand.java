@@ -8,8 +8,10 @@ import lombok.Getter;
 public class CreateUserCommand implements Command<User> {
 
     private User user;
+    private String password;
 
-    public CreateUserCommand(User user){
+    public CreateUserCommand(User user, String password){
         this.user = user;
+        this.password = password;
     }
 }

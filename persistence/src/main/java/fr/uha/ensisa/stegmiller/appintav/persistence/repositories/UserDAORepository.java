@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface UserDAORepository extends JpaRepository<User, Long> {
 
-    @Query("select u from User u where u.name like concat('%', ?1, '%') and u.firstname like concat('%', ?2, '%')")
-    List<User> findUsersByNameAndFirstname(String name, String firstname);
+    @Query("select u from User u where u.name like concat('%', ?1, '%') and u.lastname like concat('%', ?2, '%')")
+    List<User> findUsersByNameAndLastname(String name, String firstname);
 
     Boolean existsUserByUsername(String username);
 
