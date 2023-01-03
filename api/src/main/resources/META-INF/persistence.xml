@@ -4,7 +4,7 @@
              version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <persistence-unit name="tarask" transaction-type="RESOURCE_LOCAL">
-        <class>fr.uha.ensisa.stegmiller.appintav.model.Organization</class>
+        <class>fr.uha.ensisa.stegmiller.appintav.model.Organisation</class>
         <class>fr.uha.ensisa.stegmiller.appintav.model.Favor</class>
         <class>fr.uha.ensisa.stegmiller.appintav.model.User</class>
         <class>fr.uha.ensisa.stegmiller.appintav.model.Address</class>
@@ -22,6 +22,7 @@
             <property name="hibernate.format_sql" value="true" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+            <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
         </properties>
     </persistence-unit>
 

@@ -45,7 +45,7 @@ public class MockEventService implements EventService {
             rep.setStatut(event.getStatut());
             rep.setLocationAddress(event.getLocationAddress());
             rep.setFavors(event.getFavors());
-            rep.setOrganization(event.getOrganization());
+            rep.setOrganisation(event.getOrganisation());
             rep.setId(counter);
             counter++;
             events.add(rep);

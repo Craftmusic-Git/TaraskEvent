@@ -84,4 +84,9 @@ public class MockUserService implements UserService {
 
             }
     }
+
+    @Override
+    public User updateUser(User user) {
+        return user;
+    }
 }

@@ -12,4 +12,5 @@ public interface UserService {
     Optional<User> getUserById(final Long id);
     List<User> searchUserByNameLastName(final String name, final String lastName);
     void removeUser(final User user);
+    User updateUser(final User user);
 }

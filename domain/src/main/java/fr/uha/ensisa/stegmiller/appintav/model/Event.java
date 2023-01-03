@@ -2,6 +2,7 @@ package fr.uha.ensisa.stegmiller.appintav.model;
 
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.*;
@@ -39,10 +40,12 @@ public class Event extends Model<Event> {
 
     @OneToOne
     @JoinColumn(name = "organization_id")
-    private Organization organization;
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Organisation organisation;
 
     @ManyToOne
     @JoinColumn(name = "location_address_id")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Address locationAddress;
 
     @ManyToMany
@@ -65,20 +68,20 @@ public class Event extends Model<Event> {
     public Event(){
         guests = new ArrayList<>();
         favors = new HashMap<>();
-        organization = new Organization();
+        organisation = new Organisation();
     }
 
     public Event(String name, Address locationAddress){
         guests = new ArrayList<>();
         favors = new HashMap<>();
-        organization = new Organization();
+        organisation = new Organisation();
         this.name = name;
         this.locationAddress = locationAddress;
     }
 
     public void reScoring(){
         Calendar c = Calendar.getInstance();
-        c.setTime(organization.getDate());
+        c.setTime(organisation.getDate());
         int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
         int dateScore = 0;
         if(dayOfTheWeek == 6 || dayOfTheWeek == 7)
@@ -87,7 +90,7 @@ public class Event extends Model<Event> {
         if(monthOfTheYear == 7 || monthOfTheYear == 8 || monthOfTheYear == 11){
             dateScore += 2;
         }
-        organization.getScoring().setDateScore(dateScore);
+        organisation.getScoring().setDateScore(dateScore);
     }
 
     @Override
@@ -103,8 +106,8 @@ public class Event extends Model<Event> {
             this.statut = model.getStatut();
         if(model.getLocationAddress() != null)
             this.locationAddress = model.getLocationAddress();
-        if(model.getOrganization() != null)
-            this.organization = model.getOrganization();
+        if(model.getOrganisation() != null)
+            this.organisation = model.getOrganisation();
         return this;
     }
 }

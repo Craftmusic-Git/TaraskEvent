@@ -3,6 +3,7 @@ package fr.uha.ensisa.stegmiller.appintav.model;
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class User extends Model<User> {
             inverseJoinColumns = @JoinColumn(name = "events_id")
     )
     @ToString.Exclude
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<Event> eventOrganized;
 
     @ManyToMany
@@ -57,9 +59,11 @@ public class User extends Model<User> {
             inverseJoinColumns = @JoinColumn(name = "favors_id")
     )
     @ToString.Exclude
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<Favor> managedFavor;
 
     @Column(name = "status")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Status status;
 
     public User(){

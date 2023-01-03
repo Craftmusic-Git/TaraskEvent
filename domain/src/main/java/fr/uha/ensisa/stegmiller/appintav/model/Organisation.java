@@ -16,7 +16,7 @@ import java.util.Objects;
 @ToString
 @Entity
 @Table(name = "organizations")
-public class Organization extends Model<Organization> {
+public class Organisation extends Model<Organisation> {
 
     public enum Day{
         MONDAY,
@@ -35,10 +35,10 @@ public class Organization extends Model<Organization> {
         TEMPEST
     }
 
-    @Column(name = "day")
+    @Transient
     Day day;
 
-    @Column(name = "weather")
+    @Transient
     Weather weather;
 
     @Column(name = "date")
@@ -56,7 +56,7 @@ public class Organization extends Model<Organization> {
     @Transient
     private Scoring scoring;
 
-    public Organization(){
+    public Organisation(){
         date = null;
         capacity = 5;
         isOutside = Boolean.FALSE;
@@ -64,7 +64,7 @@ public class Organization extends Model<Organization> {
         scoring = new Scoring();
     }
 
-    public Organization(Date date){
+    public Organisation(Date date){
         this.date = date;
         capacity = 5;
         isOutside = Boolean.FALSE;
@@ -73,7 +73,7 @@ public class Organization extends Model<Organization> {
     }
 
     @Override
-    public Organization update(Organization model) {
+    public Organisation update(Organisation model) {
         super.update(model);
         if(model.getIsOutside() != null)
             this.isOutside = model.getIsOutside();
@@ -94,7 +94,7 @@ public class Organization extends Model<Organization> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Organization that = (Organization) o;
+        Organisation that = (Organisation) o;
         return id != null && Objects.equals(id, that.id);
     }
 

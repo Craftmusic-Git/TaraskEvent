@@ -43,7 +43,7 @@ public class SpringSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .grantType(OAuth2Constants.PASSWORD)
                 .realm(keycloakProperties.getMasterRealm())
                 .clientId(keycloakProperties.getClientId())
-                //.clientSecret(keycloakProperties.getSecret())
+                .clientSecret(keycloakProperties.getSecret())
                 .username(keycloakProperties.getAdminUsername())
                 .password(keycloakProperties.getAdminPassword())
                 .serverUrl(keycloakProperties.getServerUrl())

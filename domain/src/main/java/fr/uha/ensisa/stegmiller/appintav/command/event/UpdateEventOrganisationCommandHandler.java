@@ -2,7 +2,7 @@ package fr.uha.ensisa.stegmiller.appintav.command.event;
 
 import an.awesome.pipelinr.Command;
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
-import fr.uha.ensisa.stegmiller.appintav.model.Organization;
+import fr.uha.ensisa.stegmiller.appintav.model.Organisation;
 import fr.uha.ensisa.stegmiller.appintav.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,10 +41,10 @@ public class UpdateEventOrganisationCommandHandler implements Command.Handler<Up
             LOGGER.warning("Event don't have the good statut");
         }
         switch (command.getPropertyType()){
-            case DATE -> event.getOrganization().setDate((Date)command.getInformation());
-            case CAPACITY -> event.getOrganization().setCapacity((Integer)command.getInformation());
-            case EXTERN -> event.getOrganization().setIsOutside((Boolean) command.getInformation());
-            case LIMIT_AGE -> event.getOrganization().setAgeLimit((Integer) command.getInformation());
+            case DATE -> event.getOrganisation().setDate((Date)command.getInformation());
+            case CAPACITY -> event.getOrganisation().setCapacity((Integer)command.getInformation());
+            case EXTERN -> event.getOrganisation().setIsOutside((Boolean) command.getInformation());
+            case LIMIT_AGE -> event.getOrganisation().setAgeLimit((Integer) command.getInformation());
         }
 
         event = eventService.updateEvent(event);
@@ -61,7 +61,7 @@ public class UpdateEventOrganisationCommandHandler implements Command.Handler<Up
     }
 
     private Boolean eventIsComplete(Event event){
-        Organization organization = event.getOrganization();
-        return organization.getIsOutside() != null && organization.getDate() != null && organization.getCapacity() != null && organization.getAgeLimit() != null;
+        Organisation organisation = event.getOrganisation();
+        return organisation.getIsOutside() != null && organisation.getDate() != null && organisation.getCapacity() != null && organisation.getAgeLimit() != null;
     }
 }

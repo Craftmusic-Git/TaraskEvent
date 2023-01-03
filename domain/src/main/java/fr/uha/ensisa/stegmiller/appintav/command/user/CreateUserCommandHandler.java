@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.rmi.UnexpectedException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -54,6 +55,13 @@ public class CreateUserCommandHandler implements Command.Handler<CreateUserComma
             LOGGER.warning("User "+user.getName()+" is to young "+user.getBirthdate());
             throw new Error("user is to young " + user.getBirthdate());
         }
+        if (user.getEventOrganized() == null) {
+            user.setEventOrganized(new ArrayList<>());
+        }
+        if (user.getManagedFavor() == null) {
+            user.setManagedFavor(new ArrayList<>());
+        }
+
         try {
             user.setKeycloakId(securityService.registerUser(user, command.getPassword()));
         } catch (UnexpectedException e) {

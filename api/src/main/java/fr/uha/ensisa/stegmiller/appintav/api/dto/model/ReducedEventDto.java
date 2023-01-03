@@ -3,7 +3,11 @@ package fr.uha.ensisa.stegmiller.appintav.api.dto.model;
 import fr.uha.ensisa.stegmiller.appintav.core.DTO;
 import fr.uha.ensisa.stegmiller.appintav.core.DTOofModel;
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ReducedEventDto extends DTO implements DTOofModel<Event> {
 
     private String name;
@@ -18,6 +22,7 @@ public class ReducedEventDto extends DTO implements DTOofModel<Event> {
     @Override
     public Event modelOfDTO() {
         Event event = new Event();
+        event.setId(id);
         event.setName(name);
         event.setStatut(statut);
         return event;
@@ -27,7 +32,10 @@ public class ReducedEventDto extends DTO implements DTOofModel<Event> {
     public void dtoOfModel(Event model) {
         id = model.getId();
         name = model.getName();
-        maxGuest = model.getOrganization().getCapacity();
-        nbGuest = model.getGuests().size();
+        maxGuest = model.getOrganisation().getCapacity();
+        if (model.getGuests() != null) {
+            nbGuest = model.getGuests().size();
+        }
+        statut = model.getStatut();
     }
 }

@@ -1,7 +1,7 @@
 package fr.uha.ensisa.stegmiller.appintav.cucumber;
 
 import fr.uha.ensisa.stegmiller.appintav.model.Event.Statut;
-import fr.uha.ensisa.stegmiller.appintav.model.Organization;
+import fr.uha.ensisa.stegmiller.appintav.model.Organisation;
 import io.cucumber.java.ParameterType;
 
 import java.text.ParseException;
@@ -58,26 +58,26 @@ public class ParameterTypes {
     }
 
     @ParameterType("Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi|Dimanche")
-    public Organization.Day day(String value){
+    public Organisation.Day day(String value){
         switch (value){
-            case "Lundi" -> { return Organization.Day.MONDAY; }
-            case "Mardi" -> { return Organization.Day.TUESDAY; }
-            case "Mercredi" -> { return Organization.Day.WEDNESDAY; }
-            case "Jeudi" -> { return Organization.Day.THURSDAY; }
-            case "Vendredi" -> { return Organization.Day.FRIDAY; }
-            case "Samedi" -> { return Organization.Day.SATURDAY; }
-            case "Dimanche" -> { return Organization.Day.SUNDAY; }
+            case "Lundi" -> { return Organisation.Day.MONDAY; }
+            case "Mardi" -> { return Organisation.Day.TUESDAY; }
+            case "Mercredi" -> { return Organisation.Day.WEDNESDAY; }
+            case "Jeudi" -> { return Organisation.Day.THURSDAY; }
+            case "Vendredi" -> { return Organisation.Day.FRIDAY; }
+            case "Samedi" -> { return Organisation.Day.SATURDAY; }
+            case "Dimanche" -> { return Organisation.Day.SUNDAY; }
             default -> { return null; }
         }
     }
 
     @ParameterType("soleil|neige|tempête|pluie")
-    public Organization.Weather weather(String value){
+    public Organisation.Weather weather(String value){
         switch (value){
-            case "soleil" -> { return Organization.Weather.SUNNY; }
-            case "neige" -> { return Organization.Weather.SNOWING; }
-            case "tempête" -> { return Organization.Weather.TEMPEST; }
-            case "pluie" -> { return Organization.Weather.RAINING; }
+            case "soleil" -> { return Organisation.Weather.SUNNY; }
+            case "neige" -> { return Organisation.Weather.SNOWING; }
+            case "tempête" -> { return Organisation.Weather.TEMPEST; }
+            case "pluie" -> { return Organisation.Weather.RAINING; }
             default -> { return null; }
         }
     }

@@ -24,7 +24,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event createEvent(Event event) {
-        event.setStatut(Event.Statut.CONFIGURATION);
         return eventDAO.save(event);
     }
 

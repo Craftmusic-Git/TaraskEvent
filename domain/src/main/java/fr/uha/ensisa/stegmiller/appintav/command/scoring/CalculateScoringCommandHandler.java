@@ -1,7 +1,7 @@
 package fr.uha.ensisa.stegmiller.appintav.command.scoring;
 
 import an.awesome.pipelinr.Command;
-import fr.uha.ensisa.stegmiller.appintav.model.Organization;
+import fr.uha.ensisa.stegmiller.appintav.model.Organisation;
 import fr.uha.ensisa.stegmiller.appintav.model.Scoring;
 import org.springframework.stereotype.Component;
 
@@ -39,15 +39,15 @@ public class CalculateScoringCommandHandler implements Command.Handler<Calculate
         if(command.isDuringVacancy())
             date += 2;
         rep.setDateScore(date);
-        Organization.Weather weather = command.getWeather();
+        Organisation.Weather weather = command.getWeather();
         if(command.isExterior()) {
-            if (weather == Organization.Weather.RAINING || weather == Organization.Weather.TEMPEST || weather == Organization.Weather.SNOWING || command.getTemperature() < 10)
+            if (weather == Organisation.Weather.RAINING || weather == Organisation.Weather.TEMPEST || weather == Organisation.Weather.SNOWING || command.getTemperature() < 10)
                 rep.setWeatherScore(0);
             else if (command.getTemperature() > 30) {
                 rep.setWeatherScore(3);
             } else rep.setWeatherScore(5);
         }else{
-            if(weather == Organization.Weather.SNOWING || weather == Organization.Weather.TEMPEST || command.getTemperature() > 30)
+            if(weather == Organisation.Weather.SNOWING || weather == Organisation.Weather.TEMPEST || command.getTemperature() > 30)
                 rep.setWeatherScore(3);
             else rep.setWeatherScore(5);
         }

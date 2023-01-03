@@ -97,8 +97,8 @@ public class StepDefinition {
     Favor processFavor;
     Object favorPropertyValue;
     Link link;
-    Organization.Day scoringDay;
-    Organization.Weather scoringWeather;
+    Organisation.Day scoringDay;
+    Organisation.Weather scoringWeather;
     Boolean scoringVacancy;
     Boolean scoringExterior;
     int scoringHeat;
@@ -342,7 +342,7 @@ public class StepDefinition {
     }
 
     @Etantdonné("le {day} de la date de l'event")
-    public void leJourDeLaSemaineDeLaDateDelEvent(Organization.Day day){
+    public void leJourDeLaSemaineDeLaDateDelEvent(Organisation.Day day){
         scoringDay = day;
     }
 
@@ -357,7 +357,7 @@ public class StepDefinition {
     }
 
     @Etantdonné("la {weather} prévue")
-    public void laMeteoPrevue(Organization.Weather weather){
+    public void laMeteoPrevue(Organisation.Weather weather){
         scoringWeather = weather;
     }
 
@@ -714,32 +714,32 @@ public class StepDefinition {
 
     @Alors("la date de l'event est mise à jour avec l'{date}")
     public void la_date_de_l_event_est_mise_à_jour_avec_l(Date date) {
-        assertEquals(processEvent.getOrganization().getDate(), date);
+        assertEquals(processEvent.getOrganisation().getDate(), date);
     }
 
     @Alors("la capacité de l'event est mise à jour avec l'{int}")
     public void la_capacité_de_l_event_est_mise_à_jour_avec_l(Integer int1) {
-        assertEquals(processEvent.getOrganization().getCapacity(), int1);
+        assertEquals(processEvent.getOrganisation().getCapacity(), int1);
     }
 
     @Alors("la en exterieur de l'event est mise à jour avec l'{bool}")
     public void la_en_exterieur_de_l_event_est_mise_à_jour_avec_l_non(Boolean bool) {
-        assertEquals(processEvent.getOrganization().getIsOutside(), bool);
+        assertEquals(processEvent.getOrganisation().getIsOutside(), bool);
     }
 
     @Alors("la age limite de l'event est mise à jour avec l'{int}")
     public void la_age_limite_de_l_event_est_mise_à_jour_avec_l(Integer int1) {
-        assertEquals(processEvent.getOrganization().getAgeLimit(), int1);
+        assertEquals(processEvent.getOrganisation().getAgeLimit(), int1);
     }
 
     @Alors("le scoring est calculé")
     public void leScoringEstCalcule(){
-        assertNotEquals(0, event.getOrganization().getScoring().getGlobalScore());
+        assertNotEquals(0, event.getOrganisation().getScoring().getGlobalScore());
     }
 
     @Alors("le scoring est recalculé")
     public void leScoringEstRecalcule(){
-        assertNotEquals(0, event.getOrganization().getScoring().getGlobalScore());
+        assertNotEquals(0, event.getOrganisation().getScoring().getGlobalScore());
     }
 
     @Alors("l'event est donc au statut {string}")

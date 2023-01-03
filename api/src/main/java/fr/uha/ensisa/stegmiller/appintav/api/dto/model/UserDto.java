@@ -12,6 +12,7 @@ import java.util.Date;
 @Setter
 public class UserDto extends DTO implements DTOofModel<User> {
 
+    private String username;
     private String name;
     private String lastname;
     private Date birthdate;
@@ -22,6 +23,7 @@ public class UserDto extends DTO implements DTOofModel<User> {
         rep.setName(name);
         rep.setLastname(lastname);
         rep.setBirthdate(birthdate);
+        rep.setUsername(username);
         return rep;
     }
 
@@ -31,5 +33,6 @@ public class UserDto extends DTO implements DTOofModel<User> {
         this.name = model.getName();
         this.lastname = model.getLastname();
         this.birthdate = model.getBirthdate();
+        this.username = model.getUsername();
     }
 }
