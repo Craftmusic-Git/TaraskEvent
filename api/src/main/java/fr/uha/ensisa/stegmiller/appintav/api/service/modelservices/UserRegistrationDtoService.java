@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserRegistrationDtoService implements DTOServiceOfModel<UserRegistrationDto, User> {
 
-    final UserDAORepository userRepository;
+    private final UserDAORepository userRepository;
 
-    final KeycloakService keycloakService;
+    private final KeycloakService keycloakService;
 
     public UserRegistrationDtoService(UserDAORepository userRepository, KeycloakService keycloakService) {
         this.userRepository = userRepository;

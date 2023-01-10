@@ -2,8 +2,8 @@ package fr.uha.ensisa.stegmiller.appintav.command.favor;
 
 import an.awesome.pipelinr.Command;
 import fr.uha.ensisa.stegmiller.appintav.model.Favor;
+import fr.uha.ensisa.stegmiller.appintav.service.EventService;
 import fr.uha.ensisa.stegmiller.appintav.service.FavorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.logging.Logger;
@@ -11,10 +11,16 @@ import java.util.logging.Logger;
 @Component
 public class CreateFavorCommandHandler implements Command.Handler<CreateFavorCommand, Favor>{
 
-    @Autowired
-    FavorService favorService;
+    final FavorService favorService;
+
+    final EventService eventService;
 
     private static final Logger LOGGER = Logger.getLogger("CreateFavorHandler");
+
+    public CreateFavorCommandHandler(FavorService favorService, EventService eventService) {
+        this.favorService = favorService;
+        this.eventService = eventService;
+    }
 
     @Override
     public Favor handle(CreateFavorCommand command) {
@@ -29,6 +35,7 @@ public class CreateFavorCommandHandler implements Command.Handler<CreateFavorCom
 
         if(command.getOrganizator() != null)
             LOGGER.info(command.getOrganizator() + " created a new favor");
+
         var f = favorService.createFavor(command.getEvent(),command.getFavor());
         return f;
     }

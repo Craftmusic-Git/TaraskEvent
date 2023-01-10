@@ -14,7 +14,7 @@ public class UpdateEventOrganisationCommand implements Command<Event> {
         EXTERN("en exterieur"),
         LIMIT_AGE("age limite");
 
-        private String propertyName;
+        private final String propertyName;
 
         Property(String property) {
             propertyName = property;

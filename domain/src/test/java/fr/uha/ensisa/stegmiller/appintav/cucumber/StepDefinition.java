@@ -194,6 +194,7 @@ public class StepDefinition {
         unUtilisateurConecte();
         lAdresseDelEvent();
         lUtilisateurCreelEvent();
+        processEvent = new Event();
         processEvent.setStatut(event.getStatut());
         event = processEvent;
         processEvent = null;

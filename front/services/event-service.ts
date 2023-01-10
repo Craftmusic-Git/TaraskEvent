@@ -3,12 +3,14 @@ import {UserEventsResponseDto} from "../src/shared/dtos/response/user-events-res
 import {EventReducedDto} from "../src/shared/dtos/event-reduced.dto";
 import {CreateEventRequestDto} from "../src/shared/dtos/request/create-event-request.dto";
 import {CreateEventResponseDto} from "../src/shared/dtos/response/create-event-response.dto";
+import { GetEventResponseDto } from '../src/shared/dtos/response/get-event-response.dto'
+import { UpdateDto } from '../src/shared/dtos/update.dto'
 
 export class EventService extends BackSecurizedService {
 
     static readonly GET_ALL_EVENTS_OF_USER = "/api/auth/event/me"
 
-    static readonly CRETE_EVENT = "/api/auth/event"
+    static readonly EVENT = "/api/auth/event"
 
     constructor(token: string) {
         super(token);
@@ -24,7 +26,23 @@ export class EventService extends BackSecurizedService {
         const request = new CreateEventRequestDto();
         request.event = event;
 
-        const response = await this.doPostSecurizedBackRequest<CreateEventResponseDto>(EventService.CRETE_EVENT, request);
+        const response = await this.doPostSecurizedBackRequest<CreateEventResponseDto>(EventService.EVENT, request);
+
+        return response.data;
+    }
+
+    getEvent = async (id: any) : Promise<GetEventResponseDto> => {
+        const response = await this.doGetSecurizedBackRequest<GetEventResponseDto>(EventService.EVENT+'?id='+id, null);
+
+        return response.data;
+    }
+
+    updateEventOrganisation = async (id: any, update: UpdateDto) : Promise<GetEventResponseDto> => {
+        if (update.property == "EXTERN") {
+            update.information = !!update.information;
+        }
+
+        const response = await this.doPatchSecurizedBackRequest<GetEventResponseDto>(EventService.EVENT+'?id='+id, update);
 
         return response.data;
     }

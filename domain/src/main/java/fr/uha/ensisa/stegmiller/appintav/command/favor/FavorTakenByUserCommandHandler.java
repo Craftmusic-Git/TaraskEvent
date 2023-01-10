@@ -43,6 +43,8 @@ public class FavorTakenByUserCommandHandler implements Command.Handler<FavorTake
         joinEventCommandHandler.handle(new JoinEventCommand(command.getEvent(),command.getUser()));
         var f = favorService.addUserToFavor(command.getFavor(),command.getUser());
         command.getEvent().getFavors().put(f,command.getUser());
+        command.getEvent().getEmptyFavors().remove(f);
+        eventService.updateEvent(command.getEvent());
         return command.getEvent();
     }
 }

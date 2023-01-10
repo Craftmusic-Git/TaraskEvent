@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDtoService implements DTOServiceOfModel<UserDto, User> {
 
-    final UserDAORepository userRepository;
+    private final UserDAORepository userRepository;
 
     public UserDtoService(UserDAORepository userRepository) {
         this.userRepository = userRepository;

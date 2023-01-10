@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReducedEventDtoServicce implements DTOServiceOfModel<ReducedEventDto, Event> {
 
-    final EventDAORepository eventDAO;
+    private final EventDAORepository eventDAO;
 
     public ReducedEventDtoServicce(EventDAORepository eventDAO) {
         this.eventDAO = eventDAO;

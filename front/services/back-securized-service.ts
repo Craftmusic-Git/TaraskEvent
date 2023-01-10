@@ -29,4 +29,16 @@ export abstract class BackSecurizedService {
 
         return this.api.get(path, final);
     }
+
+    protected  doDeleteSecurizedBackRequest<T>(path: string, request: AbstractRequestDto | null): Promise<AxiosResponse<T>> {
+        const final = instanceToPlain(request, { exposeUnsetFields: false});
+
+        return this.api.delete(path, final);
+    }
+
+    protected doPatchSecurizedBackRequest<T>(path: string, request: AbstractRequestDto | null) : Promise<AxiosResponse<T>> {
+        const final = instanceToPlain(request, { exposeUnsetFields: false});
+
+        return this.api.patch(path, final);
+    }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateEventDtoService implements DTOServiceOfModel<CreationEventDto, Event> {
 
-    final EventDAORepository eventDAORepository;
+    private final EventDAORepository eventDAORepository;
 
     public CreateEventDtoService(EventDAORepository eventDAORepository) {
         this.eventDAORepository = eventDAORepository;

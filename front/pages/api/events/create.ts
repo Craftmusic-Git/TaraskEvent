@@ -11,8 +11,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const event = new EventReducedDto();
 
-    console.log(req.body);
-
     event.name = req.body.name;
 
     const rep = await eventService.createEvent(event);

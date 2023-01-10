@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Transactional
 @Service
 public class FavorServiceImpl implements FavorService {
@@ -33,7 +35,7 @@ public class FavorServiceImpl implements FavorService {
         rep.setProgress(favor.getProgress());
         rep.setTitle(favor.getTitle());
         Favor var = favorDAO.save(rep);
-        event.getFavors().put(var,null);
+        event.getEmptyFavors().add(var);
         eventDAO.save(event);
         return var;
     }
@@ -48,5 +50,9 @@ public class FavorServiceImpl implements FavorService {
     @Override
     public Favor updateFavor(Favor favor) {
         return favorDAO.save(favor);
+    }
+
+    public Optional<Favor> getFavorById(final Long id) {
+        return favorDAO.findById(id);
     }
 }

@@ -65,6 +65,9 @@ public class Event extends Model<Event> {
     @MapKeyJoinColumn(name = "favors_id")
     private Map<Favor,User> favors;
 
+    @OneToMany
+    private List<Favor> emptyFavors;
+
     public Event(){
         guests = new ArrayList<>();
         favors = new HashMap<>();

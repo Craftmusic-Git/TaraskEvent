@@ -7,6 +7,7 @@ import fr.uha.ensisa.stegmiller.appintav.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -37,18 +38,15 @@ public class UpdateEventOrganisationCommandHandler implements Command.Handler<Up
             throw new Error("Property type is not defined");
         }
         Event event = command.getEvent();
-        if(event.getStatut() != Event.Statut.CONFIGURATION || event.getStatut() != Event.Statut.WAITING ) {
+        if(event.getStatut() != Event.Statut.CONFIGURATION && event.getStatut() != Event.Statut.WAITING ) {
             LOGGER.warning("Event don't have the good statut");
         }
         switch (command.getPropertyType()){
-            case DATE -> event.getOrganisation().setDate((Date)command.getInformation());
+            case DATE -> event.getOrganisation().setDate(integerToDate(command.getInformation()));
             case CAPACITY -> event.getOrganisation().setCapacity((Integer)command.getInformation());
             case EXTERN -> event.getOrganisation().setIsOutside((Boolean) command.getInformation());
             case LIMIT_AGE -> event.getOrganisation().setAgeLimit((Integer) command.getInformation());
         }
-
-        event = eventService.updateEvent(event);
-        LOGGER.info("User : "+command.getOrganisator()+" update "+command.getPropertyType()+" : "+command.getInformation());
 
         if(eventIsComplete(event)) {
             event.setStatut(Event.Statut.WAITING);
@@ -57,11 +55,25 @@ public class UpdateEventOrganisationCommandHandler implements Command.Handler<Up
             event.reScoring();
         }
 
+        event = eventService.updateEvent(event);
+        LOGGER.info("User : "+command.getOrganisator()+" update "+command.getPropertyType()+" : "+command.getInformation());
+
+
         return event;
     }
 
     private Boolean eventIsComplete(Event event){
         Organisation organisation = event.getOrganisation();
         return organisation.getIsOutside() != null && organisation.getDate() != null && organisation.getCapacity() != null && organisation.getAgeLimit() != null;
+    }
+
+    private Date integerToDate(Object number) {
+        if (number.getClass() == Date.class)
+            return (Date)number;
+        if (number.getClass() == Integer.class)
+            return Date.from(Instant.ofEpochSecond(((Integer) number).longValue()));
+        if (number.getClass() == Long.class)
+            return Date.from(Instant.ofEpochSecond((Long) number));
+        return null;
     }
 }

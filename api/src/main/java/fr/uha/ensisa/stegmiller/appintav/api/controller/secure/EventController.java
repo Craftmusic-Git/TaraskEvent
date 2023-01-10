@@ -1,19 +1,26 @@
 package fr.uha.ensisa.stegmiller.appintav.api.controller.secure;
 
-import fr.uha.ensisa.stegmiller.appintav.api.dto.model.CreationEventDto;
-import fr.uha.ensisa.stegmiller.appintav.api.dto.model.ReducedEventDto;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.model.*;
 import fr.uha.ensisa.stegmiller.appintav.api.dto.request.CreateEventRequestDto;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.request.UpdateEventRequestDto;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.response.GetEventResponseDto;
 import fr.uha.ensisa.stegmiller.appintav.api.dto.response.UserEventsResponseDto;
+import fr.uha.ensisa.stegmiller.appintav.api.service.EventServiceImpl;
 import fr.uha.ensisa.stegmiller.appintav.api.service.UserServiceImpl;
 import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.CreateEventDtoService;
+import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.FavorDtoService;
 import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.ReducedEventDtoServicce;
 import fr.uha.ensisa.stegmiller.appintav.command.event.CreateEventCommand;
 import fr.uha.ensisa.stegmiller.appintav.command.event.CreateEventCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.command.event.UpdateEventOrganisationCommand;
+import fr.uha.ensisa.stegmiller.appintav.command.event.UpdateEventOrganisationCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.model.Event;
+import fr.uha.ensisa.stegmiller.appintav.model.Favor;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController()
@@ -21,17 +28,23 @@ import java.util.Optional;
 public class EventController {
 
     final UserServiceImpl userService;
+    final EventServiceImpl eventService;
 
     final ReducedEventDtoServicce redEventService;
     final CreateEventDtoService createEventDtoService;
+    final FavorDtoService favorDtoService;
 
     final CreateEventCommandHandler createEventCommandHandler;
+    final UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandler;
 
-    public EventController(UserServiceImpl userService, ReducedEventDtoServicce redEventService, CreateEventDtoService createEventDtoService, CreateEventCommandHandler createEventCommandHandler) {
+    public EventController(UserServiceImpl userService, EventServiceImpl eventService, ReducedEventDtoServicce redEventService, CreateEventDtoService createEventDtoService, FavorDtoService favorDtoService, CreateEventCommandHandler createEventCommandHandler, UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandler) {
         this.userService = userService;
+        this.eventService = eventService;
         this.redEventService = redEventService;
         this.createEventDtoService = createEventDtoService;
+        this.favorDtoService = favorDtoService;
         this.createEventCommandHandler = createEventCommandHandler;
+        this.updateEventOrganisationCommandHandler = updateEventOrganisationCommandHandler;
     }
 
     @GetMapping("/all")
@@ -59,5 +72,96 @@ public class EventController {
         response.setEventsOrganized(redEventService.modelToDTOList(user.get().getEventOrganized()));
         response.setEvents(redEventService.getAllEventOfAGuest(user.get()));
         return response;
+    }
+
+    @GetMapping
+    public GetEventResponseDto getEventById(@RequestParam("id") final long id) {
+        Optional<User> user = userService.getCurrentUser();
+
+        if (user.isEmpty()) {
+            throw new Error("No user !");
+        }
+        User currentUser = user.get();
+
+        Optional<Event> event = eventService.getEventById(id);
+        if (event.isEmpty()) {
+            throw new Error("No event !");
+        }
+        Event currentEvent = event.get();
+
+        if(currentUser.getEventOrganized().stream().noneMatch(e -> e.getId().equals(id)) && currentEvent.getGuests().stream().noneMatch(u -> u.getId().equals(currentUser.getId()))) {
+            throw new Error("User is not in this event");
+        }
+
+        GetEventResponseDto response = new GetEventResponseDto();
+
+        response.setName(currentEvent.getName());
+        response.setId(id);
+        response.setStatut(currentEvent.getStatut());
+
+        OrganisationDto organisation = new OrganisationDto();
+        organisation.dtoOfModel(currentEvent.getOrganisation());
+        response.setOrganisation(organisation);
+
+        Map<User, List<Favor>> usersFavors = getUsersFavorFromEvent(currentEvent);
+
+        currentEvent.getGuests().forEach(g -> {
+            GuestDto guest = new GuestDto();
+            guest.dtoOfModel(g);
+            if (usersFavors.containsKey(g)) {
+                guest.setFavors(usersFavors.get(g).stream().map(FavorDto::new).toList());
+            }
+            response.getGuests().add(guest);
+        });
+
+        response.setEmptyFavors((List<FavorDto>) favorDtoService.modelToDTOList(currentEvent.getEmptyFavors()));
+
+        return response;
+    }
+
+    @PatchMapping
+    public GetEventResponseDto updateEventOrganisation(@RequestParam("id") final long id,@RequestBody final UpdateEventRequestDto request) {
+        Optional<User> user = userService.getCurrentUser();
+
+        if (user.isEmpty()) {
+            throw new Error("No user !");
+        }
+        User currentUser = user.get();
+
+        Optional<Event> event = eventService.getEventById(id);
+        if (event.isEmpty()) {
+            throw new Error("No event !");
+        }
+        Event currentEvent = event.get();
+
+        if (currentUser.getEventOrganized().stream().noneMatch(e -> e.getId().equals(currentEvent.getId()))) {
+            throw new Error("User si not the creator of the event");
+        }
+
+        UpdateEventOrganisationCommand command = new UpdateEventOrganisationCommand(currentEvent, currentUser, request.getProperty(), request.getInformation());
+        updateEventOrganisationCommandHandler.handle(command);
+
+        return getEventById(id);
+    }
+
+    private Map<User, List<Favor>> getUsersFavorFromEvent(Event event) {
+        Map<User, List<Favor>> rep = new HashMap<>();
+        event.getFavors().forEach((key, value) -> {
+            if (!rep.containsKey(value)) {
+                rep.put(value, new ArrayList<>());
+            }
+            rep.get(value).add(key);
+        });
+        return rep;
+    }
+
+    private List<Favor> getFavorWithoutManager(Event event) {
+        List<Favor> favors = new ArrayList<>();
+
+        event.getFavors().forEach((key, value) -> {
+            if (value == null) favors.add(key);
+        });
+
+        return favors;
     }
 }

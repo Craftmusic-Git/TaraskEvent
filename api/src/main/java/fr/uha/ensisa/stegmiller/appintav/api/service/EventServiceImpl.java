@@ -1,6 +1,7 @@
 package fr.uha.ensisa.stegmiller.appintav.api.service;
 
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
+import fr.uha.ensisa.stegmiller.appintav.model.Favor;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
 import fr.uha.ensisa.stegmiller.appintav.persistence.repositories.EventDAORepository;
 import fr.uha.ensisa.stegmiller.appintav.service.EventService;
@@ -64,5 +65,16 @@ public class EventServiceImpl implements EventService {
     public Event addUserToEvent(Event event, User user) {
         event.getGuests().add(user);
         return eventDAO.save(event);
+    }
+
+    public void deleteEmptyFavorIdFromEvent(long id) {
+        Optional<Event> event = eventDAO.findByEmptyFavors_Id(id);
+
+        if (event.isPresent()) {
+            Optional<Favor> favor = event.get().getEmptyFavors().stream().filter(e -> e.getId().equals(id)).findFirst();
+            if (favor.isPresent()) {
+                event.get().getEmptyFavors().remove(favor.get());
+            }
+        }
     }
 }
