@@ -29,24 +29,29 @@ const OrganisationOption = ({data, mutate}: OrganisationOptionProp) => {
       setCapacity(data.organisation.capacity);
       setAgeLimit(data.organisation.ageLimit)
       setIsOutside(data.organisation.isOutside)
-      // @ts-ignore
-      let eventDate = new Date(data.organisation.date);
-      const monthValue = eventDate.getMonth() + 1;
-      const dayValue = eventDate.getDay() + 1;
       let entry = {
-        "startDate": eventDate.getFullYear() + '-' + monthValue + '-' +  dayValue,
-        "endDate": eventDate.getFullYear() + '-' + monthValue + '-' +  dayValue,
+        "startDate": data.organisation.date,
+        "endDate": data.organisation.date,
       }
       handleValueChange(entry)
     }
   }, [])
 
 
+  const reformatDate = (date: string) : string => {
+    if (date.length < 10) {
+      if (date.at(6) == '-') {
+        date = date.slice(0, 5) + '0' + date.slice(5, 9);
+      }
+      if (date.length < 10) {
+        date = date.slice(0, 8) + '0' + date.slice(8);
+      }
+    }
+    return date;
+  }
 
   const sendUpdates = async (e: { preventDefault: () => void; target: any;}) => {
     e.preventDefault();
-
-
 
     if (capacity != data?.organisation?.capacity) {
       let request = new UpdateDto();
@@ -62,11 +67,10 @@ const OrganisationOption = ({data, mutate}: OrganisationOptionProp) => {
       await sendRequest(request);
     }
 
-    if (Date.parse(date) != data?.organisation?.date) {
+    if (reformatDate(date.startDate) != data?.organisation?.date) {
       let request = new UpdateDto();
       request.property = "DATE";
-      const reqDate = new Date(date.startDate)
-      request.information = (reqDate.getTime() / 1000);
+      request.information = reformatDate(date.startDate.replaceAll(',','-'));
       await sendRequest(request);
     }
 
@@ -114,7 +118,7 @@ const OrganisationOption = ({data, mutate}: OrganisationOptionProp) => {
             <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">En extérieur : </span>
             <div className="mt-4 ml-6">
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" checked={isOutside} onChange={(e) => setIsOutside(setIsOutside(e.target.value))} className="sr-only peer"/>
+                <input type="checkbox" checked={isOutside} onChange={(e) => setIsOutside(e.target.checked)} className="sr-only peer"/>
                 <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
               </label>
             </div>

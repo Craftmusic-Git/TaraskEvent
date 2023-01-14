@@ -6,7 +6,7 @@ import fr.uha.ensisa.stegmiller.appintav.model.Organisation;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 
 @Getter
@@ -20,7 +20,7 @@ public class OrganisationDto extends DTO implements DTOofModel<Organisation> {
     private Integer capacity;
 
     private Boolean isOutside;
-    private Date date;
+    private LocalDate date;
 
     private Integer ageLimit;
 

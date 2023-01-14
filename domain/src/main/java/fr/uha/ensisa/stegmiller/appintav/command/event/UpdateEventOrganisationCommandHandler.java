@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -42,7 +44,7 @@ public class UpdateEventOrganisationCommandHandler implements Command.Handler<Up
             LOGGER.warning("Event don't have the good statut");
         }
         switch (command.getPropertyType()){
-            case DATE -> event.getOrganisation().setDate(integerToDate(command.getInformation()));
+            case DATE -> event.getOrganisation().setDate(LocalDate.parse((String) command.getInformation(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
             case CAPACITY -> event.getOrganisation().setCapacity((Integer)command.getInformation());
             case EXTERN -> event.getOrganisation().setIsOutside((Boolean) command.getInformation());
             case LIMIT_AGE -> event.getOrganisation().setAgeLimit((Integer) command.getInformation());

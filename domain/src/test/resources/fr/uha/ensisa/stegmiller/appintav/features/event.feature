@@ -21,12 +21,11 @@ Plan du scénario: Organiser l'event
 
     Exemples:
         | propriété    | information |
-        | date         | 27/09/2023  |
         | capacité     | 15          |
         | en exterieur | non         |
         | age limite   | 15          |
 
-Scénario: Un event est complètement renseigné
+    Scénario: Un event est complètement renseigné
     Étant donné un event
     Et que l'event est au statut "Organisation"
     Et son organisateur

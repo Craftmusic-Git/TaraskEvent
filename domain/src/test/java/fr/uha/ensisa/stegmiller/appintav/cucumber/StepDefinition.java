@@ -22,8 +22,9 @@ import io.cucumber.java.fr.Quand;
 import io.cucumber.java.fr.Étantdonné;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -200,9 +201,9 @@ public class StepDefinition {
         processEvent = null;
     }
 
-    @Étantdonné("une {date} pour une date de l'event")
-    public void une_pour_une_date_de_l_event(Date date) {
-        updateInformation = date;
+    @Étantdonné("une {int}-{int}-{int} pour une date de l'event")
+    public void une_pour_une_date_de_l_event(Integer int1, Integer int2, Integer int3) {
+        updateInformation = int1 + "-" + int2 + "-" +int3;
         updateProperty = UpdateEventOrganisationCommand.Property.DATE;
     }
 
@@ -443,8 +444,8 @@ public class StepDefinition {
         }
     }
 
-    @Quand("l'organisateur met à jour la date de l'event avec l'{date}")
-    public void l_organisateur_met_à_jour_la_date_de_l_event_avec_l(Date date) {
+    @Quand("l'organisateur met à jour la date de l'event avec l'{int}-{int}-{int}")
+    public void l_organisateur_met_à_jour_la_date_de_l_event_avec_l(Integer int1, Integer int2, Integer int3) {
         try {
             processEvent = updateEventOrganisationCommandHandle.handle(new UpdateEventOrganisationCommand(event, user, updateProperty, updateInformation));
         } catch (Exception e) {
@@ -713,9 +714,9 @@ public class StepDefinition {
         assertTrue(isOrganist);
     }
 
-    @Alors("la date de l'event est mise à jour avec l'{date}")
-    public void la_date_de_l_event_est_mise_à_jour_avec_l(Date date) {
-        assertEquals(processEvent.getOrganisation().getDate(), date);
+    @Alors("la date de l'event est mise à jour avec l'{int}-{int}-{int}")
+    public void la_date_de_l_event_est_mise_à_jour_avec_l(Integer int1, Integer int2, Integer int3) {
+        assertEquals(processEvent.getOrganisation().getDate(), LocalDate.parse((String) (int1 + "-" + int2 + "-" + int3), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     @Alors("la capacité de l'event est mise à jour avec l'{int}")

@@ -1,8 +1,10 @@
 package fr.uha.ensisa.stegmiller.appintav.api.controller.secure;
 
 import fr.uha.ensisa.stegmiller.appintav.api.dto.model.*;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.request.CreateEventLinkRequestDto;
 import fr.uha.ensisa.stegmiller.appintav.api.dto.request.CreateEventRequestDto;
 import fr.uha.ensisa.stegmiller.appintav.api.dto.request.UpdateEventRequestDto;
+import fr.uha.ensisa.stegmiller.appintav.api.dto.response.CreateEventLinkResponseDto;
 import fr.uha.ensisa.stegmiller.appintav.api.dto.response.GetEventResponseDto;
 import fr.uha.ensisa.stegmiller.appintav.api.dto.response.UserEventsResponseDto;
 import fr.uha.ensisa.stegmiller.appintav.api.service.EventServiceImpl;
@@ -10,10 +12,9 @@ import fr.uha.ensisa.stegmiller.appintav.api.service.UserServiceImpl;
 import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.CreateEventDtoService;
 import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.FavorDtoService;
 import fr.uha.ensisa.stegmiller.appintav.api.service.modelservices.ReducedEventDtoServicce;
-import fr.uha.ensisa.stegmiller.appintav.command.event.CreateEventCommand;
-import fr.uha.ensisa.stegmiller.appintav.command.event.CreateEventCommandHandler;
-import fr.uha.ensisa.stegmiller.appintav.command.event.UpdateEventOrganisationCommand;
-import fr.uha.ensisa.stegmiller.appintav.command.event.UpdateEventOrganisationCommandHandler;
+import fr.uha.ensisa.stegmiller.appintav.command.event.*;
+import fr.uha.ensisa.stegmiller.appintav.command.link.CreateLinkCommand;
+import fr.uha.ensisa.stegmiller.appintav.command.link.CreateLinkCommandHandler;
 import fr.uha.ensisa.stegmiller.appintav.model.Event;
 import fr.uha.ensisa.stegmiller.appintav.model.Favor;
 import fr.uha.ensisa.stegmiller.appintav.model.User;
@@ -36,8 +37,10 @@ public class EventController {
 
     final CreateEventCommandHandler createEventCommandHandler;
     final UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandler;
+    final CreateLinkCommandHandler createLinkCommandHandler;
+    final JoinEventCommandHandler joinEventCommandHandler;
 
-    public EventController(UserServiceImpl userService, EventServiceImpl eventService, ReducedEventDtoServicce redEventService, CreateEventDtoService createEventDtoService, FavorDtoService favorDtoService, CreateEventCommandHandler createEventCommandHandler, UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandler) {
+    public EventController(UserServiceImpl userService, EventServiceImpl eventService, ReducedEventDtoServicce redEventService, CreateEventDtoService createEventDtoService, FavorDtoService favorDtoService, CreateEventCommandHandler createEventCommandHandler, UpdateEventOrganisationCommandHandler updateEventOrganisationCommandHandler, CreateLinkCommandHandler createLinkCommandHandler, JoinEventCommandHandler joinEventCommandHandler) {
         this.userService = userService;
         this.eventService = eventService;
         this.redEventService = redEventService;
@@ -45,6 +48,8 @@ public class EventController {
         this.favorDtoService = favorDtoService;
         this.createEventCommandHandler = createEventCommandHandler;
         this.updateEventOrganisationCommandHandler = updateEventOrganisationCommandHandler;
+        this.createLinkCommandHandler = createLinkCommandHandler;
+        this.joinEventCommandHandler = joinEventCommandHandler;
     }
 
     @GetMapping("/all")
@@ -142,6 +147,74 @@ public class EventController {
         updateEventOrganisationCommandHandler.handle(command);
 
         return getEventById(id);
+    }
+
+    @PostMapping("/link")
+    public CreateEventLinkResponseDto CreateLink(@RequestBody final CreateEventLinkRequestDto request) {
+        Optional<User> user = userService.getCurrentUser();
+
+        if (user.isEmpty()) {
+            throw new Error("No user !");
+        }
+        User currentUser = user.get();
+
+        if (request.getEventID() == null) {
+            throw new Error("No event id !");
+        }
+
+        Optional<Event> opEvent = eventService.getEventById(request.getEventID());
+        if (opEvent.isEmpty()) {
+            throw new Error("Event id is not found");
+        }
+
+        CreateEventLinkResponseDto rep = new CreateEventLinkResponseDto();
+        rep.setLink(createLinkCommandHandler.handle(new CreateLinkCommand(opEvent.get())));
+        return rep;
+    }
+
+    @PostMapping("/join")
+    public GetEventResponseDto joinEvent(@RequestParam("id") Long id) {
+        Optional<User> user = userService.getCurrentUser();
+
+        if (user.isEmpty()) {
+            throw new Error("No user !");
+        }
+        User currentUser = user.get();
+
+        Optional<Event> opEvent = eventService.getEventById(id);
+
+        if (opEvent.isEmpty()) {
+            throw new Error("Event id not available");
+        }
+
+        Event currentEvent = opEvent.get();
+
+        joinEventCommandHandler.handle(new JoinEventCommand(currentEvent, currentUser));
+
+        GetEventResponseDto response = new GetEventResponseDto();
+
+        response.setName(currentEvent.getName());
+        response.setId(currentEvent.getId());
+        response.setStatut(currentEvent.getStatut());
+
+        OrganisationDto organisation = new OrganisationDto();
+        organisation.dtoOfModel(currentEvent.getOrganisation());
+        response.setOrganisation(organisation);
+
+        Map<User, List<Favor>> usersFavors = getUsersFavorFromEvent(currentEvent);
+
+        currentEvent.getGuests().forEach(g -> {
+            GuestDto guest = new GuestDto();
+            guest.dtoOfModel(g);
+            if (usersFavors.containsKey(g)) {
+                guest.setFavors(usersFavors.get(g).stream().map(FavorDto::new).toList());
+            }
+            response.getGuests().add(guest);
+        });
+
+        response.setEmptyFavors((List<FavorDto>) favorDtoService.modelToDTOList(currentEvent.getEmptyFavors()));
+
+        return response;
     }
 
     private Map<User, List<Favor>> getUsersFavorFromEvent(Event event) {

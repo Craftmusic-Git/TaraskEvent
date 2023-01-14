@@ -17,7 +17,7 @@ export class OrganisationDto {
   isOutside?: boolean;
 
   @Expose()
-  date?: number;
+  date?: string;
 
   @Expose()
   ageLimit?: number;

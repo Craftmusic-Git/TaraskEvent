@@ -1,14 +1,16 @@
 package fr.uha.ensisa.stegmiller.appintav.model;
 
 import fr.uha.ensisa.stegmiller.appintav.core.Model;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
@@ -42,7 +44,7 @@ public class Organisation extends Model<Organisation> {
     Weather weather;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDate date;
 
     @Column(name = "capacity")
     private Integer capacity;
@@ -64,7 +66,7 @@ public class Organisation extends Model<Organisation> {
         scoring = new Scoring();
     }
 
-    public Organisation(Date date){
+    public Organisation(LocalDate date){
         this.date = date;
         capacity = 5;
         isOutside = Boolean.FALSE;

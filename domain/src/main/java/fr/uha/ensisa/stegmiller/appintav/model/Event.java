@@ -83,14 +83,10 @@ public class Event extends Model<Event> {
     }
 
     public void reScoring(){
-        Calendar c = Calendar.getInstance();
-        c.setTime(organisation.getDate());
-        int dayOfTheWeek = c.get(Calendar.DAY_OF_WEEK);
         int dateScore = 0;
-        if(dayOfTheWeek == 6 || dayOfTheWeek == 7)
+        if(organisation.getDate().getDayOfWeek().ordinal() == 6 || organisation.getDate().getDayOfWeek().ordinal() == 7)
             dateScore += 3;
-        int monthOfTheYear = c.get(Calendar.MONTH);
-        if(monthOfTheYear == 7 || monthOfTheYear == 8 || monthOfTheYear == 11){
+        if(organisation.getDate().getMonthValue() == 7 || organisation.getDate().getMonthValue() == 8 || organisation.getDate().getMonthValue() == 11){
             dateScore += 2;
         }
         organisation.getScoring().setDateScore(dateScore);

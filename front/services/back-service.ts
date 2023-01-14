@@ -2,7 +2,7 @@ import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {AbstractRequestDto} from "../src/shared/dtos/abstract/abstract-request.dto";
 import {instanceToPlain} from "class-transformer";
 
-export const BACK_END_SERVICE_URL : string = 'http://localhost:8079/'
+export const BACK_END_SERVICE_URL : string = 'http://localhost:8080/'
 
 export abstract class BackService {
 

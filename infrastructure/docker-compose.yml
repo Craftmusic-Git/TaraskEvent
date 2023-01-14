@@ -43,5 +43,15 @@ services:
     networks:
       - local-tarask
 
+  #back:
+  #  depends_on:
+  #    - keycloak
+  #  container_name: back_tarask
+  #  image: tarask-event-back
+  #  ports:
+  #    - "8079:8080"
+  #  networks:
+  #    - local-tarask
+
 networks:
   local-tarask:
